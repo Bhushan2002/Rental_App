@@ -19,6 +19,7 @@ Widget inputField(String text, Icon? icon, TextEditingController? controller) {
     controller: controller,
     decoration: InputDecoration(
       labelText: text,
+      labelStyle: TextStyle(color: Colors.black),
       prefixIcon: icon,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       filled: true,

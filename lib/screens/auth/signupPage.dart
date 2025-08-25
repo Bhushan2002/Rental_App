@@ -59,47 +59,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     }
   }
 
-  // Future<void> _signup() async {
-  //   if (_isLoading) return;
-  //   if (_passwordController.text != _confirmPasswordController.text) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('Passwords do not match'),
-  //         backgroundColor: Colors.redAccent,
-  //       ),
-  //     );
-  //     return;
-  //   }
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //
-  //   try {
-  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //       email: _emailController.text.trim(),
-  //       password: _passwordController.text.trim(),
-  //     );
-  //     if(mounted){
-  //       Navigator.of(context).pop();
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     String message;
-  //     if (e.code == 'weak-password') {
-  //       message = 'The password provided is too weak.';
-  //     } else if (e.code == 'email-already-in-use') {
-  //       message = 'An account already exists for that email.';
-  //     } else {
-  //       message = 'An error occurred. Please try again.';
-  //     }
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
-  //     );
-  //   }finally {
-  //     if (mounted) {
-  //       setState(() { _isLoading = false; });
-  //     }
-  //   }
-  // }
   @override
   void dispose() {
     _emailController.dispose();

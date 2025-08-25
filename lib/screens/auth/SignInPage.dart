@@ -19,31 +19,6 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   bool _isPasswordVisible = false;
 
-  // Future<void> _signIn() async {
-  //   try {
-  //     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //       email: _emailController.text.trim(),
-  //       password: _passwordController.text.trim(),
-  //     );
-  //     print('sign in successfully/');
-  //   } on FirebaseAuthException catch (e) {
-  //     String message;
-  //     if (e.code =='user-not-found'){
-  //       message = "no user found that email.";
-  //     }else if (e.code == 'wrong-password') {
-  //       message = 'Wrong password provided for that user.';
-  //     } else {
-  //       message = 'An error occurred. Please try again.';
-  //     }
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(message),
-  //         backgroundColor: Colors.redAccent,
-  //       ),
-  //     );
-  //   }
-  // }
-
   void _signIn() {
     ref
         .read(authControllerProvider.notifier)
@@ -117,7 +92,6 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // TODO: Navigate to the sign-up page
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SignUpPage()),
@@ -140,10 +114,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     );
   }
 
-  // Widget for the password text field
   Widget buildPasswordField() {
     return TextField(
-      // Toggles secure text entry based on the state variable
       obscureText: !_isPasswordVisible,
       controller: _passwordController,
       decoration: InputDecoration(
@@ -152,13 +124,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
         filled: true,
         fillColor: Colors.grey[200],
-        // Suffix icon to toggle password visibility
+
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
           ),
           onPressed: () {
-            // Update the state to change the icon and visibility
             setState(() {
               _isPasswordVisible = !_isPasswordVisible;
             });
