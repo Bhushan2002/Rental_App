@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
 import 'package:rental_application/screens/MainScreens/MainNavBarScreen.dart';
+import 'package:rental_application/screens/Owner/LandingPage.dart';
+
 import 'package:rental_application/screens/auth/SignInPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 
@@ -28,7 +30,6 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateChangesProvide);
-
     final themeMode = ref.watch(themeControllerProvider);
 
     return MaterialApp(
@@ -38,13 +39,15 @@ class MyApp extends ConsumerWidget {
       themeMode: themeMode,
       home: authState.when(
         data: (user) {
-          if (user != null) return const MainNavigationScreen();
-          return const SignInPage();
+          if (user != null) {
+            return MainNavigationScreen();
+          }
+          return SignInPage();
         },
         error: (err, stack) =>
             Scaffold(body: Center(child: Text("error: $err"))),
         loading: () =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
+            const Scaffold(body: Center(child: Text('there is a problem'))),
       ),
     );
   }

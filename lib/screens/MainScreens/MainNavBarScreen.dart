@@ -5,7 +5,6 @@ import 'package:rental_application/screens/MainScreens/HomScreen.dart';
 import 'package:rental_application/screens/MainScreens/MyBooking.dart';
 import 'package:rental_application/screens/MainScreens/P&mPage.dart';
 import 'package:rental_application/screens/MainScreens/PremiunPage.dart';
-import 'package:rental_application/widgets/MapWidget.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -20,7 +19,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final List<Widget> _pages = [
     HomeScreen(), // Home/properties
     PackageAndMoversPage(),
-    // MapboxWidget(),
     MyBookingPage(),
     PrimiumPage(),
   ];

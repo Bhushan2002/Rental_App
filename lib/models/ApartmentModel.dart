@@ -23,12 +23,14 @@ class Apartment extends Property {
     required bool isAvailable,
     required String ownerId,
     required List<String> amenities,
+
     required this.floor,
     required this.hasElevator,
     required this.hasSecurity,
     required this.apartmentNumber,
     required this.hasParking,
     required this.hasBalcony,
+
   }) : super(
     id: id,
     type: PropertyType.apartment,
@@ -45,6 +47,7 @@ class Apartment extends Property {
     createdAt: createdAt,
     ownerId: ownerId,
     amenities: amenities,
+
   );
 
   @override

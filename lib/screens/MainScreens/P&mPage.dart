@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/widgets/MapWidget.dart';
 
 class PackageAndMoversPage extends ConsumerWidget {
   const PackageAndMoversPage({super.key});

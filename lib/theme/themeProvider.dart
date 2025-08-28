@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    primarySwatch: Colors.blue,
+    primarySwatch: Colors.blueGrey,
     scaffoldBackgroundColor: Colors.grey[100],
     appBarTheme: AppBarTheme(
       backgroundColor: const Color.fromARGB(255, 5, 33, 56),
@@ -57,11 +57,24 @@ class AppTheme {
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
     ),
+    primaryTextTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+        bodyLarge: TextStyle(fontSize: 20, color: Colors.black),
+        bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+      titleMedium: TextStyle(
+        fontSize: 20,
+        color: Colors.black
+      )
+    )
   );
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: const Color(0xFF121212),
+    scaffoldBackgroundColor: const Color(0xFF393636),
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFF1F1F1F),
       foregroundColor: Colors.white,
@@ -113,6 +126,21 @@ class AppTheme {
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
     ),
+    primaryTextTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      bodyLarge: TextStyle(fontSize: 24, color: Colors.white),
+      bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
+      titleMedium: TextStyle(
+        fontSize: 20,
+        color: Colors.white
+      )
+
+    ),
+
   );
 }
 

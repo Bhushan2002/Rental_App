@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/auth/auth_repository.dart';
+import 'package:rental_application/models/UserModel.dart';
 
 class AuthController extends StateNotifier<bool> {
   final AuthRepository _authRepository;
@@ -10,6 +11,7 @@ class AuthController extends StateNotifier<bool> {
     required String email,
     required String password,
     required Function(String) onError,
+    required UserRole role,
   }) async {
     state = true;
     try {
@@ -26,6 +28,7 @@ class AuthController extends StateNotifier<bool> {
     required String password,
     required String firstName,
     required String lastName,
+    required String role,
     required Function(String) onError,
   }) async {
     state = true;
@@ -35,6 +38,7 @@ class AuthController extends StateNotifier<bool> {
         password: password,
         firstName: firstName,
         lastName: lastName,
+        role: role
       );
     } on FirebaseAuthException catch (e) {
       onError(_mapAuthError(e));

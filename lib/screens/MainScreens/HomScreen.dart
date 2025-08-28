@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:rental_application/auth/auth_provider.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/MapWidget.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:rental_application/widgets/SearchProperty.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -17,6 +19,23 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
+    //
+    final String serverUrl = 'http://10.0.2.2:9000/';
+
+    Future<dynamic> fetchResponse() async {
+      try {
+        final response = await http.get(Uri.parse(serverUrl));
+        if (response.statusCode == 200) {
+          print(response.body); // Debug log
+          return jsonDecode(response.body);
+        } else {
+          throw Exception("Failed with status: ${response.statusCode}");
+        }
+      } catch (e) {
+        throw Exception("Error: $e");
+      }
+    }
+
     final userDetails = ref.watch(userDetailsProvider);
     final themeMode = ref.watch(themeControllerProvider);
 
@@ -116,12 +135,30 @@ class _HomeScreenState extends ConsumerState {
             ),
           ),
           body: SingleChildScrollView(
-            child: Column(children: [PropertySearchCard()]),
+            child: Column(
+              children: [
+                PropertySearchCard(),
+                FutureBuilder(
+                  future: fetchResponse(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text("Error: ${snapshot.error}");
+                    } else if (snapshot.hasData) {
+                      return Text("Response: ${snapshot.data.toString()}");
+                    } else {
+                      return Text("No data");
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
       error: (err, stack) => Text('$err'),
-      loading: () => Center(child: const CircularProgressIndicator()),
+      loading: () => CircularProgressIndicator(),
     );
   }
 }

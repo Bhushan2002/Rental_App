@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/auth/signupPage.dart';
+import 'package:rental_application/theme/themeProvider.dart';
 
 import 'package:rental_application/widgets/InputFields.dart';
 
@@ -25,6 +27,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         .signInWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
+          role: UserRole.tenant,
           onError: (error) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error), backgroundColor: Colors.redAccent),
           ),
@@ -40,6 +43,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       // Using a SingleChildScrollView to prevent overflow when the keyboard appears
       body: Center(
@@ -51,7 +55,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               // Header Section
-              buildHeader('Welcome Back!'),
+              buildHeader(context,'Welcome Back!'),
+              Text(
+                'Sign in to continue',
+                style: TextStyle(fontSize: 18.0, color: Colors.grey),
+              ),
               const SizedBox(height: 48.0),
 
               // Email Input Field
@@ -118,12 +126,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     return TextField(
       obscureText: !_isPasswordVisible,
       controller: _passwordController,
+      style: TextStyle(color: Colors.black54),
       decoration: InputDecoration(
         labelText: 'Password',
+        labelStyle: TextStyle(color: Colors.black54),
         prefixIcon: const Icon(Icons.lock_outline),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
         filled: true,
-        fillColor: Colors.grey[200],
+        fillColor: Colors.grey[300],
 
         suffixIcon: IconButton(
           icon: Icon(

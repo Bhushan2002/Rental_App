@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 enum PropertyType { apartment, house }
 
@@ -11,7 +10,7 @@ class Property {
   final String description;
   final double price;
   final String location;
-  final List<String> images;
+  final List<String>? images;
   final int bedrooms;
   final int bathrooms;
   final int bhk;
@@ -29,7 +28,7 @@ class Property {
     required this.description,
     required this.price,
     required this.location,
-    required this.images,
+    this.images,
     required this.bedrooms,
     required this.bathrooms,
     required this.area,

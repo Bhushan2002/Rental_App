@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rental_application/theme/themeProvider.dart';
 
 Widget buildfirstAndLastNameField(
   TextEditingController firstnameController,
@@ -15,37 +17,34 @@ Widget buildfirstAndLastNameField(
 
 Widget inputField(String text, Icon? icon, TextEditingController? controller) {
   return TextField(
-    // Toggles secure text entry based on the state variable
     controller: controller,
+    cursorColor: Colors.grey[500],
+    style: TextStyle(color: Colors.black54),
     decoration: InputDecoration(
+
       labelText: text,
-      labelStyle: TextStyle(color: Colors.black),
+      labelStyle: TextStyle(color: Colors.black54),
       prefixIcon: icon,
+
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       filled: true,
-      fillColor: Colors.grey[200],
+      fillColor: Colors.grey[300],
+
     ),
   );
 }
 
 // Widget for the header section
-Widget buildHeader(String title) {
+Widget buildHeader( context, String title) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         title,
-        style: TextStyle(
-          fontSize: 32.0,
-          fontWeight: FontWeight.bold,
-          color: Colors.black45,
-        ),
+        style: Theme.of(context).primaryTextTheme.titleLarge
       ),
       SizedBox(height: 8.0),
-      Text(
-        'Sign in to continue',
-        style: TextStyle(fontSize: 18.0, color: Colors.grey),
-      ),
+
     ],
   );
 }
@@ -56,7 +55,7 @@ Widget buildForgotPasswordLink() {
     alignment: Alignment.centerRight,
     child: TextButton(
       onPressed: () {
-        // TODO: Implement forgot password functionality
+
         print('Forgot Password Tapped');
       },
       child: const Text(
@@ -153,3 +152,47 @@ Widget socialButton(
     ),
   );
 }
+
+
+
+// Post Property Form  Fields
+
+Widget buildTextFormField({
+  required TextEditingController controller,
+  required String label,
+  TextInputType? keyboardType,
+  int? maxLines,
+  required TextStyle tstyle,
+  String? Function(String?)? validator,
+
+
+}) {
+  return TextFormField(
+    controller: controller,
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: tstyle,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      filled: true,
+      fillColor: Colors.white12,
+    ),
+    keyboardType: keyboardType,
+    maxLines: maxLines,
+    validator: validator,
+  );
+}
+
+
+Widget buildSectionTitle(String title, context) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      title,
+      style:Theme.of(context).primaryTextTheme.titleMedium,
+    ),
+  );
+}
+
+

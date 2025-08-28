@@ -36,6 +36,7 @@ class AuthRepository {
     required String password,
     required String firstName,
     required String lastName,
+    required String role,
   }) async {
     UserCredential userCredential = await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -46,6 +47,7 @@ class AuthRepository {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        role: role,
       );
     }
   }
@@ -55,11 +57,14 @@ class AuthRepository {
     required String firstName,
     required String lastName,
     required String email,
+    required String role,
   }) async {
     await _firestore.collection('users').doc(uid).set({
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
+      'role':role
+
     });
   }
 
