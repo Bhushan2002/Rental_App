@@ -1,6 +1,6 @@
 import 'package:rental_application/models/PropertyModel.dart';
 
-class HousesModel extends Property{
+class HousesModel extends Property {
   final int floors;
   final bool hasGarden;
   final bool hasPool;
@@ -27,23 +27,23 @@ class HousesModel extends Property{
     required this.hasPool,
     required this.landArea,
     required this.isFurnished,
-}):super(
-    id:id,
-    type: PropertyType.house,
-    title: title,
-    description: description,
-    price: price,
-    location: location,
-    images: images,
-    bedrooms: bedrooms,
-    bathrooms: bathrooms,
-    bhk: bhk,
-    area: area,
-    isAvailable: isAvailable,
-    createdAt: createdAt,
-    ownerId: ownerId,
-    amenities: amenities,
-  );
+  }) : super(
+         id: id,
+         type: PropertyType.House,
+         title: title,
+         description: description,
+         price: price,
+         location: location,
+         images: images,
+         bedrooms: bedrooms,
+         bathrooms: bathrooms,
+         bhk: bhk,
+         area: area,
+         isAvailable: isAvailable,
+         createdAt: createdAt,
+         ownerId: ownerId,
+         amenities: amenities,
+       );
   @override
   Map<String, dynamic> toMap() {
     return {
@@ -75,12 +75,12 @@ class HousesModel extends Property{
       hasGarden: map['hasGarden'] ?? false,
       landArea: map['landArea']?.toDouble() ?? 0.0,
       hasPool: map['hasPool'] ?? false,
-      isFurnished: map['isFurnished'] ?? false, bhk: map['bhk'] ?? 0,
+      isFurnished: map['isFurnished'] ?? false,
+      bhk: map['bhk'] ?? 0,
     );
   }
   @override
   String toString() {
     return 'House(${super.toString()}, floors: $floors, landArea: $landArea)';
   }
-
 }

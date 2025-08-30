@@ -30,25 +30,23 @@ class Apartment extends Property {
     required this.apartmentNumber,
     required this.hasParking,
     required this.hasBalcony,
-
   }) : super(
-    id: id,
-    type: PropertyType.apartment,
-    title: title,
-    description: description,
-    price: price,
-    location: location,
-    images: images,
-    bedrooms: bedrooms,
-    bathrooms: bathrooms,
-    bhk: bhk,
-    area: area,
-    isAvailable: isAvailable,
-    createdAt: createdAt,
-    ownerId: ownerId,
-    amenities: amenities,
-
-  );
+         id: id,
+         type: PropertyType.Apartment,
+         title: title,
+         description: description,
+         price: price,
+         location: location,
+         images: images,
+         bedrooms: bedrooms,
+         bathrooms: bathrooms,
+         bhk: bhk,
+         area: area,
+         isAvailable: isAvailable,
+         createdAt: createdAt,
+         ownerId: ownerId,
+         amenities: amenities,
+       );
 
   @override
   Map<String, dynamic> toMap() {
@@ -62,6 +60,7 @@ class Apartment extends Property {
       'hasBalcony': hasBalcony,
     };
   }
+
   factory Apartment.fromMap(Map<String, dynamic> map) {
     return Apartment(
       id: map['id'],
@@ -82,7 +81,8 @@ class Apartment extends Property {
       hasSecurity: map['hasSecurity'] ?? false,
       apartmentNumber: map['apartmentNumber'] ?? '',
       hasParking: map['hasParking'] ?? false,
-      hasBalcony: map['hasBalcony'] ?? false, bhk: map['bhk'] ?? 0,
+      hasBalcony: map['hasBalcony'] ?? false,
+      bhk: map['bhk'] ?? 0,
     );
   }
 

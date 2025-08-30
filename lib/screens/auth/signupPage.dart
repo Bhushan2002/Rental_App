@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/auth/auth_provider.dart';
-import 'package:rental_application/models/UserModel.dart';
+
 import 'package:rental_application/screens/auth/SignInPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 
@@ -16,7 +16,6 @@ class SignUpPage extends ConsumerStatefulWidget {
 }
 
 class _SignUpPageState extends ConsumerState<SignUpPage> {
-
   // State variable to toggle password visibility
   bool _isPasswordVisible = false;
   final _emailController = TextEditingController();
@@ -54,7 +53,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             SnackBar(content: Text(error), backgroundColor: Colors.redAccent),
           ),
         );
-    
+
     if (mounted) {
       Navigator.of(context).pop();
     }
@@ -120,7 +119,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               // const SizedBox(height: 18.0),
 
               // User role buttons
-              _buildUserRoleSelector(Theme.of(context).primaryTextTheme.bodyMedium!),
+              _buildUserRoleSelector(
+                Theme.of(context).primaryTextTheme.bodyMedium!,
+              ),
               const SizedBox(height: 18.0),
 
               // Sign In Button
@@ -218,10 +219,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'I am a:',
-          style: Theme.of(context).primaryTextTheme.titleMedium
-        ),
+        Text('I am a:', style: Theme.of(context).primaryTextTheme.titleMedium),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -235,7 +233,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   setState(() {
                     _selectedRole = value!;
                     print(_selectedRole);
-
                   });
                 },
                 contentPadding: EdgeInsets.zero,
@@ -257,7 +254,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               ),
             ),
           ],
-          
         ),
       ],
     );

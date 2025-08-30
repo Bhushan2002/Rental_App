@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,21 +18,21 @@ class _HomeScreenState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     //
-    final String serverUrl = 'http://10.0.2.2:9000/';
+    // final String serverUrl = 'http://10.0.2.2:9000/';
 
-    Future<dynamic> fetchResponse() async {
-      try {
-        final response = await http.get(Uri.parse(serverUrl));
-        if (response.statusCode == 200) {
-          print(response.body); // Debug log
-          return jsonDecode(response.body);
-        } else {
-          throw Exception("Failed with status: ${response.statusCode}");
-        }
-      } catch (e) {
-        throw Exception("Error: $e");
-      }
-    }
+    // Future<dynamic> fetchResponse() async {
+    //   try {
+    //     final response = await http.get(Uri.parse(serverUrl));
+    //     if (response.statusCode == 200) {
+    //       print(response.body); // Debug log
+    //       return jsonDecode(response.body);
+    //     } else {
+    //       throw Exception("Failed with status: ${response.statusCode}");
+    //     }
+    //   } catch (e) {
+    //     throw Exception("Error: $e");
+    //   }
+    // }
 
     final userDetails = ref.watch(userDetailsProvider);
     final themeMode = ref.watch(themeControllerProvider);
@@ -138,27 +136,27 @@ class _HomeScreenState extends ConsumerState {
             child: Column(
               children: [
                 PropertySearchCard(),
-                FutureBuilder(
-                  future: fetchResponse(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    } else if (snapshot.hasData) {
-                      return Text("Response: ${snapshot.data.toString()}");
-                    } else {
-                      return Text("No data");
-                    }
-                  },
-                ),
+                // FutureBuilder(
+                //   future: fetchResponse(),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                //       return CircularProgressIndicator();
+                //     } else if (snapshot.hasError) {
+                //       return Text("Error: ${snapshot.error}");
+                //     } else if (snapshot.hasData) {
+                //       return Text("Response: ${snapshot.data.toString()}");
+                //     } else {
+                //       return Text("No data");
+                //     }
+                //   },
+                // ),
               ],
             ),
           ),
         );
       },
       error: (err, stack) => Text('$err'),
-      loading: () => CircularProgressIndicator(),
+      loading: () => Center(child: CircularProgressIndicator()),
     );
   }
 }

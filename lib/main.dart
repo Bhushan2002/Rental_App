@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
 import 'package:rental_application/screens/MainScreens/MainNavBarScreen.dart';
+
 import 'package:rental_application/screens/Owner/LandingPage.dart';
 
 import 'package:rental_application/screens/auth/SignInPage.dart';
@@ -25,8 +26,6 @@ Future<void> setup() async {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateChangesProvide);
@@ -40,7 +39,7 @@ class MyApp extends ConsumerWidget {
       home: authState.when(
         data: (user) {
           if (user != null) {
-            return MainNavigationScreen();
+            return LandingPage();
           }
           return SignInPage();
         },

@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rental_application/PropertyData/property_provider.dart';
+import 'package:rental_application/PropertyData/property_controller.dart';
+
 import 'package:rental_application/models/PropertyModel.dart';
+import 'package:rental_application/screens/Owner/CreatedProperty.dart';
+import 'package:rental_application/screens/Owner/OwnerNavbarScreen.dart';
 import 'package:rental_application/widgets/InputFields.dart';
 
 class PostPropertyForm extends ConsumerStatefulWidget {
@@ -32,7 +35,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
   final _floorsController = TextEditingController();
   final _landAreaController = TextEditingController();
 
-  PropertyType _selectedType = PropertyType.apartment;
+  PropertyType _selectedType = PropertyType.Apartment;
   List<String> _selectedAmenities = [];
   List<XFile> _selectedImages = [];
   final ImagePicker _imagePicker = ImagePicker();
@@ -165,7 +168,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
 
     try {
       final Map<String, dynamic> formData = {
-        'type': _selectedType,
+        'type': _selectedType.name,
         'title': _titleController.text,
         'description': _descriptionController.text,
         'price': double.parse(_priceController.text),
@@ -215,13 +218,21 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                   backgroundColor: Colors.green,
                 ),
               );
-              Navigator.of(context).pop();
+              if (Navigator.canPop(context)) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreatedProperty()),
+                );
+              }
             }
           });
     } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      print(e);
     }
   }
 
@@ -260,7 +271,6 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                         });
                       },
                     ),
-
                     const SizedBox(height: 24),
 
                     // Basic Information
@@ -376,9 +386,9 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                       '${_selectedType.toString().split('.').last.toUpperCase()} Details',
                       context,
                     ),
-                    if (_selectedType == PropertyType.apartment)
+                    if (_selectedType == PropertyType.Apartment)
                       _buildApartmentFields(),
-                    if (_selectedType == PropertyType.house)
+                    if (_selectedType == PropertyType.House)
                       _buildHouseFields(),
 
                     const SizedBox(height: 24),

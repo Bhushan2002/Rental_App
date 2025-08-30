@@ -1,56 +1,68 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:rental_application/cors/ApiConstants.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:rental_application/models/PropertyModel.dart';
-import 'package:uuid/uuid.dart';
+// Provider to create an instance of the repository
+final propertyRepositoryProvider = Provider((ref) => PropertyRepository());
 
 class PropertyRepository {
-  final FirebaseFirestore _firestore;
-  final FirebaseStorage _storage;
-  PropertyRepository({
-    required FirebaseFirestore firestore,
-    required FirebaseStorage storage,
-  }) : _firestore = firestore,
-       _storage = storage;
-  CollectionReference get _properties => _firestore.collection('properties');
-
-  Future<List<String>> uploadImages(List<File> images, String propertyId)async{
-    List<String> imageUrls = [];
-    for (var image in images){
-      final ref = _storage.ref().child('property_images').child(propertyId).child(const Uuid().v4());
-      await ref.putFile(image);
-      final url = await ref.getDownloadURL();
-      imageUrls.add(url);
-    }
-    return imageUrls;
-  }
-  
-  
-  Future<void> addProperty(Property property) async {
+  /// Adds a new property by sending a multipart request to the backend.
+  ///
+  /// Throws an [Exception] with an error message on failure.
+  Future<void> addProperty({required Map<String, dynamic> formData}) async {
     try {
-      await _properties.doc(property.id).set(property.toMap());
-    } on FirebaseException catch (e) {
-      throw Exception("Error adding property: ${e.message}");
+      // Get the current user's Firebase ID token for authentication
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated. Please log in.');
+      }
+      final token = await user.getIdToken();
+
+      // Create a multipart request for uploading files
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(ApiConstants.createProperty),
+      );
+
+      // Add the authentication token to the headers
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields from the form data
+      formData.forEach((key, value) {
+        if (key != 'images' && value != null) {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add image files to the request
+      final List<File> imageFiles = formData['images'] as List<File>;
+      for (final imageFile in imageFiles) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'images', // This key must match what your backend (e.g., multer) expects
+            imageFile.path,
+          ),
+        );
+      }
+
+      // Send the request
+      final streamedResponse = await request.send();
+
+      // Check the response
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 201) {
+        // If the server did not return a 201 CREATED response, throw an error.
+        final errorData = jsonDecode(response.body);
+        throw Exception(
+          errorData['message'] ?? 'Failed to add property. Please try again.',
+        );
+      }
+    } catch (e) {
+      // Re-throw any caught exception to be handled by the controller
+      throw Exception(e.toString());
     }
-  }
-
-  // Fetch properties
-
-  Stream<List<Property>> getProperties() {
-    return _properties.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return Property.fromMap(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
   }
 }
-
-
-//update property
-
-Future<void> updateProperty(Property property) async{}
-
-// delete property
-
-Future<void> deleteProperty (Property property)async {}

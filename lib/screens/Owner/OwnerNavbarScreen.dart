@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/screens/MainScreens/MyBooking.dart';
 import 'package:rental_application/screens/MainScreens/P&mPage.dart';
 import 'package:rental_application/screens/MainScreens/PremiunPage.dart';
+import 'package:rental_application/screens/Owner/OwnerProperties.dart';
 import 'package:rental_application/screens/Owner/PropertyForm.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/MapWidget.dart';
@@ -19,8 +20,8 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
+    Ownerproperties(),
     PostPropertyForm(),
-    PackageAndMoversPage(),
     MyBookingPage(),
     PrimiumPage(),
   ];
@@ -40,9 +41,7 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => MapboxWidget(),
-                      ),
+                      MaterialPageRoute(builder: (context) => MapboxWidget()),
                     );
                   },
                   icon: Icon(Icons.location_on),
@@ -53,9 +52,7 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
           ),
           IconButton(
             icon: Icon(
-              themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
             ),
             onPressed: () =>
                 ref.read(themeControllerProvider.notifier).toggleTheme(),
@@ -65,15 +62,14 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-
         elevation: 7,
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Properties'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping),
-            label: 'Packers & Movers',
+            icon: Icon(Icons.create_new_folder),
+            label: 'properties',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book_online),

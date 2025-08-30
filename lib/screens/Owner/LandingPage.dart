@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/MainScreens/MainNavBarScreen.dart';
 import 'package:rental_application/screens/Owner/OwnerNavbarScreen.dart';
 
@@ -12,31 +14,62 @@ class LandingPage extends ConsumerStatefulWidget {
 }
 
 class _LandingPageState extends ConsumerState<LandingPage> {
-
   @override
   void initState() {
     super.initState();
+    _checkUserRole();
+  }
 
-    // Delay navigation for 1 second
-    Future.delayed(const Duration(seconds: 1), () {
-      final userDetails = ref.read(userDetailsProvider);
+  Future<void> _checkUserRole() async {
+    await Future.delayed(const Duration(seconds: 1)); // splash delay
 
-      if (!mounted) return; // avoid calling Navigator after widget disposed
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // if not logged in, send back to sign-in
+      Navigator.pushReplacementNamed(context, '/signin');
+      return;
+    }
 
-      Navigator.pushReplacement(
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!mounted) return;
+
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        final role = data['role'];
+
+        if (role == UserRole.owner.name) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const OwnerNavbarScreen()),
+          );
+        } else if (role == UserRole.tenant.name) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+          );
+        } else {
+          // unknown role
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Unknown role, contact admin')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('User data not found')));
+      }
+    } catch (e) {
+      print("Error fetching user role: $e");
+      if (!mounted) return;
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(
-          builder: (context) {
-            if (userDetails.value?.role == 'owner') {
-              return const OwnerNavbarScreen();
-            } else if (userDetails.value?.role == 'tenant') {
-              return const MainNavigationScreen();
-            }
-            return CircularProgressIndicator();
-          },
-        ),
-      );
-    });
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
   }
 
   @override

@@ -1,5 +1,4 @@
-
-enum PropertyType { apartment, house }
+enum PropertyType { Apartment, House }
 
 enum FurnishedType { fullyFurnished, semiFurnished, unfurnished }
 
@@ -75,7 +74,7 @@ class Property {
       ownerId: ownerId ?? this.ownerId,
       amenities: amenities ?? this.amenities,
       updatedAt: updatedAt ?? this.updatedAt,
-       bhk: bhk ?? this.bhk,
+      bhk: bhk ?? this.bhk,
     );
   }
 
@@ -106,7 +105,7 @@ class Property {
       id: map['id'],
       type: PropertyType.values.firstWhere(
         (e) => e.toString() == map['type'],
-        orElse: () => PropertyType.apartment,
+        orElse: () => PropertyType.Apartment,
       ),
       title: map['title'],
       description: map['description'],
@@ -122,7 +121,7 @@ class Property {
       amenities: List<String>.from(map['amenities']),
 
       updatedAt: map['updatedAt'],
-      bhk: map['bhk']
+      bhk: map['bhk'],
     );
   }
 
