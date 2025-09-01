@@ -63,13 +63,10 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-        bodyLarge: TextStyle(fontSize: 20, color: Colors.black),
-        bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
-      titleMedium: TextStyle(
-        fontSize: 20,
-        color: Colors.black
-      )
-    )
+      bodyLarge: TextStyle(fontSize: 20, color: Colors.black),
+      bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+      titleMedium: TextStyle(fontSize: 20, color: Colors.black),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -113,7 +110,7 @@ class AppTheme {
       ),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
     ),
-    iconTheme: IconThemeData(color: Colors.blueAccent),
+    iconTheme: IconThemeData(color: Colors.white30),
     cardTheme: CardThemeData(
       color: Color(0xFF232323),
       elevation: 2,
@@ -134,13 +131,8 @@ class AppTheme {
       ),
       bodyLarge: TextStyle(fontSize: 24, color: Colors.white),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
-      titleMedium: TextStyle(
-        fontSize: 20,
-        color: Colors.white
-      )
-
+      titleMedium: TextStyle(fontSize: 20, color: Colors.white),
     ),
-
   );
 }
 
