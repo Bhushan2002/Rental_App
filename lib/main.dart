@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
-import 'package:rental_application/screens/MainScreens/MainNavBarScreen.dart';
 
 import 'package:rental_application/screens/Owner/LandingPage.dart';
 

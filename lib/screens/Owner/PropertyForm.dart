@@ -6,7 +6,6 @@ import 'package:rental_application/PropertyData/property_controller.dart';
 
 import 'package:rental_application/models/PropertyModel.dart';
 import 'package:rental_application/screens/Owner/CreatedProperty.dart';
-import 'package:rental_application/screens/Owner/OwnerNavbarScreen.dart';
 import 'package:rental_application/widgets/InputFields.dart';
 
 class PostPropertyForm extends ConsumerStatefulWidget {

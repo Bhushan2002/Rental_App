@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/PropertyData/Property_repository.dart';
+import 'package:rental_application/models/PropertyModel.dart';
 
 // The StateNotifierProvider for the controller
 final propertyControllerProvider =
@@ -16,11 +17,6 @@ class PropertyController extends StateNotifier<bool> {
     : _propertyRepository = propertyRepository,
       super(false); // Initial state is 'false' (not loading)
 
-  /// A future function to add a property, mirroring the structure of your `_submitForm`.
-  ///
-  /// The [formData] map contains all the property details, including a list of image files.
-  /// The [onError] callback is executed if an exception occurs during the process.
-  /// Returns a `Future<bool>` indicating success or failure.
   Future<bool> addProperty({
     required Map<String, dynamic> formData,
     required void Function(String error) onError,
@@ -38,4 +34,45 @@ class PropertyController extends StateNotifier<bool> {
       return false; // Return false on failure
     }
   }
+
+  /// Updates an existing property using its ID.
+  Future<bool> updateProperty({
+    required String id,
+    required Map<String, dynamic> formData,
+    required void Function(String error) onError,
+  }) async {
+    state = true;
+    try {
+      await _propertyRepository.updateProperty(id: id, formData: formData);
+      state = false;
+      return true;
+    } catch (e) {
+      onError(e.toString().replaceAll('Exception: ', ''));
+      state = false;
+      return false;
+    }
+  }
+
+  /// Deletes a property using its ID.
+  Future<bool> deleteProperty({
+    required String id,
+    required void Function(String error) onError,
+  }) async {
+    state = true;
+    try {
+      await _propertyRepository.deleteProperty(id: id);
+      state = false;
+
+      return true;
+    } catch (e) {
+      onError(e.toString().replaceAll('Exception: ', ''));
+      state = false;
+      return false;
+    }
+  }
 }
+
+final myPropertiesProvider = FutureProvider<List<Property>>((ref) {
+  final propertyRepository = ref.watch(propertyRepositoryProvider);
+  return propertyRepository.getMyProperties();
+});

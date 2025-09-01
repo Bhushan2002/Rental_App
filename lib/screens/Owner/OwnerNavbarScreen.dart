@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:rental_application/screens/MainScreens/MyBooking.dart';
-import 'package:rental_application/screens/MainScreens/P&mPage.dart';
+
 import 'package:rental_application/screens/MainScreens/PremiunPage.dart';
 import 'package:rental_application/screens/Owner/OwnerProperties.dart';
 import 'package:rental_application/screens/Owner/PropertyForm.dart';

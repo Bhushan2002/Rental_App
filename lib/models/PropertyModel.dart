@@ -9,7 +9,7 @@ class Property {
   final String description;
   final double price;
   final String location;
-  final List<String>? images;
+  final List<String> images;
   final int bedrooms;
   final int bathrooms;
   final int bhk;
@@ -27,7 +27,7 @@ class Property {
     required this.description,
     required this.price,
     required this.location,
-    this.images,
+    required this.images,
     required this.bedrooms,
     required this.bathrooms,
     required this.area,
@@ -100,31 +100,37 @@ class Property {
     };
   }
 
-  factory Property.fromMap(Map<String, dynamic> map) {
+  factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: map['id'],
+      id: (json['id'] ?? '').toString(),
       type: PropertyType.values.firstWhere(
-        (e) => e.toString() == map['type'],
+        (e) => e.toString() == json['type']?.toString(),
         orElse: () => PropertyType.Apartment,
       ),
-      title: map['title'],
-      description: map['description'],
-      price: map['price']?.toDouble() ?? 0.0,
-      location: map['location'],
-      images: List<String>.from(map['images']),
-      bedrooms: map['bedrooms']?.toInt() ?? 0,
-      bathrooms: map['bathrooms']?.toInt() ?? 0,
-      area: map['area']?.toDouble() ?? 0.0,
-      isAvailable: map['isAvailable'] ?? true,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
-      ownerId: map['ownerId'],
-      amenities: List<String>.from(map['amenities']),
-
-      updatedAt: map['updatedAt'],
-      bhk: map['bhk'],
+      title: (json['title'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      price: (json['price'] ?? 0).toDouble(),
+      location: (json['location'] ?? '').toString(),
+      images: (json['images'] != null)
+          ? List<String>.from(json['images'])
+          : <String>[],
+      bedrooms: json['bedrooms'] ?? 0,
+      bathrooms: json['bathrooms'] ?? 0,
+      bhk: json['bhk'] ?? 0,
+      area: (json['area'] ?? 0).toDouble(),
+      isAvailable: json['isAvailable'] ?? true,
+      createdAt: (json['createdAt'] != null)
+          ? DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      ownerId: (json['ownerId'] ?? '').toString(),
+      amenities: (json['amenities'] != null)
+          ? List<String>.from(json['amenities'])
+          : <String>[],
+      updatedAt: (json['updatedAt'] != null)
+          ? DateTime.tryParse(json['updatedAt'].toString())
+          : null,
     );
   }
-
   @override
   String toString() {
     return 'Property(id: $id, type: $type, title: $title, price: $price)';
