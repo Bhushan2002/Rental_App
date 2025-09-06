@@ -1,4 +1,7 @@
 class ApiConstants {
+
+  static const String  MAPBOXKEY = "pk.eyJ1IjoiYmh1c2hhbjAwMiIsImEiOiJjbTg0ZG0xaHIwZzQ3Mm1xM25ydGFlN3AxIn0.5WRzjQkRduSj-QiglG28MA";
+
   static const String baseUrl = 'http://10.0.2.2:9000/';
 
   static const String createProperty =

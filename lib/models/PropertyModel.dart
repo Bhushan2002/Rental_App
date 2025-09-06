@@ -1,3 +1,21 @@
+class Coordinates {
+  final double lat;
+  final double lon;
+
+  Coordinates({required this.lat, required this.lon});
+
+  Map<String, dynamic> toMap() {
+    return {'lat': lat, 'lon': lon};
+  }
+
+  factory Coordinates.fromMap(Map<String, dynamic> map) {
+    return Coordinates(
+      lat: (map['lat'] ?? 0.0).toDouble(),
+      lon: (map['lon'] ?? 0.0).toDouble(),
+    );
+  }
+}
+
 enum PropertyType { Apartment, House }
 
 enum FurnishedType { fullyFurnished, semiFurnished, unfurnished }
@@ -8,7 +26,11 @@ class Property {
   final String title;
   final String description;
   final double price;
-  final String location;
+  final String street;
+  final String city;
+  final String state;
+  final String country;
+  final String postalCode;
   final List<String> images;
   final int bedrooms;
   final int bathrooms;
@@ -19,6 +41,7 @@ class Property {
   final String ownerId;
   final List<String> amenities;
   final DateTime? updatedAt;
+  final Coordinates? coordinates;
 
   Property({
     required this.id,
@@ -26,7 +49,11 @@ class Property {
     required this.title,
     required this.description,
     required this.price,
-    required this.location,
+    required this.street,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.postalCode,
     required this.images,
     required this.bedrooms,
     required this.bathrooms,
@@ -37,6 +64,7 @@ class Property {
     required this.ownerId,
     required this.amenities,
     this.updatedAt,
+    this.coordinates,
   });
 
   Property copyWith({
@@ -45,18 +73,22 @@ class Property {
     String? title,
     String? description,
     double? price,
-    String? location,
+    String? street,
+    String? city,
+    String? state,
+    String? country,
+    String? postalCode,
     List<String>? images,
     int? bedrooms,
     int? bathrooms,
     double? area,
     bool? isAvailable,
-
     String? ownerId,
     List<String>? amenities,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? bhk,
+    Coordinates? coordinates,
   }) {
     return Property(
       id: id ?? this.id,
@@ -64,7 +96,11 @@ class Property {
       title: title ?? this.title,
       description: description ?? this.description,
       price: price ?? this.price,
-      location: location ?? this.location,
+      street: street ?? this.street,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      country: country ?? this.country,
+      postalCode: postalCode ?? this.postalCode,
       images: images ?? this.images,
       bedrooms: bedrooms ?? this.bedrooms,
       bathrooms: bathrooms ?? this.bathrooms,
@@ -75,6 +111,7 @@ class Property {
       amenities: amenities ?? this.amenities,
       updatedAt: updatedAt ?? this.updatedAt,
       bhk: bhk ?? this.bhk,
+      coordinates: coordinates ?? this.coordinates,
     );
   }
 
@@ -85,7 +122,11 @@ class Property {
       'title': title,
       'description': description,
       'price': price,
-      'location': location,
+      'street': street,
+      'city': city,
+      'state': state,
+      'country': country,
+      'postalCode': postalCode,
       'images': images,
       'bedrooms': bedrooms,
       'bathrooms': bathrooms,
@@ -94,23 +135,27 @@ class Property {
       'createdAt': createdAt.millisecondsSinceEpoch,
       'ownerId': ownerId,
       'amenities': amenities,
-
-      'updatedAt': updatedAt,
+      'updatedAt': updatedAt?.millisecondsSinceEpoch,
       'bhk': bhk,
+      'coordinates': coordinates?.toMap(),
     };
   }
 
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: (json['id'] ?? '').toString(),
+      id: (json['_id'] ?? '').toString(),
       type: PropertyType.values.firstWhere(
-        (e) => e.toString() == json['type']?.toString(),
+        (e) => e.toString().split('.').last == json['type']?.toString(),
         orElse: () => PropertyType.Apartment,
       ),
       title: (json['title'] ?? '').toString(),
       description: (json['description'] ?? '').toString(),
       price: (json['price'] ?? 0).toDouble(),
-      location: (json['location'] ?? '').toString(),
+      street: (json['street'] ?? '').toString(),
+      city: (json['city'] ?? '').toString(),
+      state: (json['state'] ?? '').toString(),
+      country: (json['country'] ?? '').toString(),
+      postalCode: (json['postalCode'] ?? '').toString(),
       images: (json['images'] != null)
           ? List<String>.from(json['images'])
           : <String>[],
@@ -129,8 +174,12 @@ class Property {
       updatedAt: (json['updatedAt'] != null)
           ? DateTime.tryParse(json['updatedAt'].toString())
           : null,
+      coordinates: json['coordinates'] != null
+          ? Coordinates.fromMap(json['coordinates'])
+          : null,
     );
   }
+
   @override
   String toString() {
     return 'Property(id: $id, type: $type, title: $title, price: $price)';

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/cors/ApiConstants.dart';
 
 import 'package:rental_application/screens/Owner/LandingPage.dart';
 
@@ -19,7 +20,7 @@ Future<void> main() async {
 
 Future<void> setup() async {
   MapboxOptions.setAccessToken(
-    "pk.eyJ1IjoiYmh1c2hhbjAwMiIsImEiOiJjbTg0ZG0xaHIwZzQ3Mm1xM25ydGFlN3AxIn0.5WRzjQkRduSj-QiglG28MA",
+    ApiConstants.MAPBOXKEY,
   );
 }
 

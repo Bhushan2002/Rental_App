@@ -1,166 +1,303 @@
-import 'dart:io';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:rental_application/PropertyData/property_controller.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+
+import 'package:rental_application/cors/ApiConstants.dart';
 import 'package:rental_application/models/PropertyModel.dart';
+import 'package:rental_application/screens/MainScreens/HomScreen.dart';
+import 'package:rental_application/screens/Owner/UpdatePropertyForm.dart';
+import 'package:rental_application/theme/themeProvider.dart';
+import 'package:rental_application/widgets/MapWidget.dart';
 
 class UpdatePropertyPage extends ConsumerStatefulWidget {
   final Property property;
   const UpdatePropertyPage({super.key, required this.property});
 
   @override
-  ConsumerState createState() => _UpdatePropertyPageState();
+  ConsumerState<UpdatePropertyPage> createState() => _UpdatePropertyPageState();
 }
 
 class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _locationController = TextEditingController();
-  final _bedroomsController = TextEditingController();
-  final _bathroomsController = TextEditingController();
-  final _bhkController = TextEditingController();
-  final _areaController = TextEditingController();
-
-  // Apartment specific controllers
-  final _floorController = TextEditingController();
-  final _apartmentNumberController = TextEditingController();
-
-  // House specific controllers
-  final _floorsController = TextEditingController();
-  final _landAreaController = TextEditingController();
-
-  PropertyType _selectedType = PropertyType.Apartment;
-  List<String> _selectedAmenities = [];
-  List<XFile> _selectedImages = [];
-  final ImagePicker _imagePicker = ImagePicker();
-
-  bool _hasElevator = false;
-  bool _hasSecurity = false;
-  bool _hasParking = false;
-  bool _hasBalcony = false;
-  bool _hasGarden = false;
-  bool _hasPool = false;
-  bool _isFurnished = false;
-  bool _isAvailable = true;
-  bool _isLoading = false;
-
-  Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_selectedImages.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one image')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      final Map<String, dynamic> formData = {
-        'type': _selectedType.name,
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'price': double.parse(_priceController.text),
-        'location': _locationController.text,
-        'bedrooms': int.parse(_bedroomsController.text),
-        'bathrooms': int.parse(_bathroomsController.text),
-        'bhk': int.parse(_bhkController.text),
-        'area': double.parse(_areaController.text),
-        'isAvailable': _isAvailable,
-        'amenities': _selectedAmenities,
-        'images': _selectedImages.map((img) => File(img.path)).toList(),
-        // Apartment-specific fields
-        'floor': int.tryParse(_floorController.text) ?? 0,
-        'apartmentNumber': _apartmentNumberController.text,
-        'hasElevator': _hasElevator,
-        'hasSecurity': _hasSecurity,
-        'hasParking': _hasParking,
-        'hasBalcony': _hasBalcony,
-        // House-specific fields
-        'floors': int.tryParse(_floorsController.text) ?? 1,
-        'landArea': double.tryParse(_landAreaController.text) ?? 0.0,
-        'hasGarden': _hasGarden,
-        'hasPool': _hasPool,
-        'isFurnished': _isFurnished,
-      };
-
-      // ref
-      //     .read(propertyControllerProvider.notifier)
-      //     .addProperty(
-      //       formData: formData,
-      //       onError: (error) {
-      //         if (mounted) {
-      //           ScaffoldMessenger.of(context).showSnackBar(
-      //             SnackBar(
-      //               content: Text(error),
-      //               backgroundColor: Colors.redAccent,
-      //             ),
-      //           );
-      //         }
-      //       },
-      //     )
-      //     .then((success) {
-      //       if (success && mounted) {
-      //         ScaffoldMessenger.of(context).showSnackBar(
-      //           const SnackBar(
-      //             content: Text('Property added successfully!'),
-      //             backgroundColor: Colors.green,
-      //           ),
-      //         );
-      // }
-      // });
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
-      print(e);
-    }
-  }
+  // Replace with your Mapbox access token
+  final String mapboxAccessToken = ApiConstants.MAPBOXKEY;
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeControllerProvider);
+    final textTheme = Theme.of(context).primaryTextTheme;
+
+    print(widget.property.coordinates);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.property.title)),
+      appBar: AppBar(
+        title: Text(widget.property.title),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => UpdatePropertyForm(property: widget.property),
+                ),
+              );
+            },
+            icon: Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () {
+              // create a alert box
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: Theme.of(context).cardColor,
+                    title: Text(
+                      "Are you sure you want to delete this property?",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    content: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[400],
+                      ),
+                      child: Text('Delete'),
+                    ),
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.delete),
+          ),
+          themeButton(ref),
+        ],
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              widget.property.images[0],
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            CarouselSlider.builder(
+              itemCount: widget.property.images.length,
+              itemBuilder: (BuildContext context, index, pageIndex) {
+                return Container(
+                  height: 200,
+                  width: 400,
+                  color: Colors.black,
+                  child: Image.network(
+                    widget.property.images[index],
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network(
+                        'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg',
+                        fit: BoxFit.fill,
+                      );
+                    },
+                  ),
+                );
+              },
+              options: CarouselOptions(
+                height: 300,
+
+                enlargeCenterPage: true,
+                enlargeFactor: 0.3,
+                // scrollDirection: Axis.vertical,
+              ),
             ),
+            SizedBox(height: 10),
+            Divider(height: 5, thickness: 2),
             const SizedBox(height: 20),
             Text(
               widget.property.title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
             Text(
-              widget.property.location,
-              style: const TextStyle(fontSize: 18, color: Colors.grey),
+              '${widget.property.street}, ${widget.property.city}',
+              style: textTheme.bodyMedium,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
+            Divider(thickness: 0.9),
             Text(
-              "₹${widget.property.price.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 22, color: Colors.green),
+              'Price',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Property Description",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              "₹ ${widget.property.price.toStringAsFixed(0)}/month",
+              style: textTheme.bodyLarge,
             ),
-            const SizedBox(height: 10),
-            const Text(
-              "This is a beautiful property located in a prime area. "
-              "It has modern facilities, great design, and easy access to all amenities.",
-              style: TextStyle(fontSize: 16),
+            SizedBox(height: 10),
+            Divider(thickness: 0.9),
+            Text(
+              "Description",
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(widget.property.description, style: textTheme.bodyMedium),
+            SizedBox(height: 10),
+            Divider(thickness: 0.9),
+
+            Text(
+              'Details',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildDetailItem(
+                  context,
+                  icon: Icons.bed_outlined,
+                  label: 'Bedrooms',
+                  value: widget.property.bedrooms.toString(),
+                ),
+                _buildDetailItem(
+                  context,
+                  icon: Icons.bathtub_outlined,
+                  label: 'Bathrooms',
+                  value: widget.property.bathrooms.toString(),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildDetailItem(
+                  context,
+                  icon: Icons.home_outlined,
+                  label: 'BHK',
+                  value: widget.property.bhk.toString(),
+                ),
+                _buildDetailItem(
+                  context,
+                  icon: Icons.area_chart_outlined,
+                  label: 'Area',
+                  value: '${widget.property.area} sqft',
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+
+            // You can add more details here if needed
+            // e.g., Furnishing Status, Parking, etc.
+            // _buildDetailItem(context, icon: Icons.chair_outlined, label: 'Furnishing', value: widget.property.furnishingStatus ?? "N/A"),
+            // _buildDetailItem(context, icon: Icons.local_parking_outlined, label: 'Parking', value: widget.property.parkingAvailable ? "Available" : "Not Available"),
+            Divider(thickness: 0.9),
+            Text(
+              "Amenities",
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: 10),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.property.amenities.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.property.amenities[index],
+                          style: textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 10),
+            Divider(thickness: 0.9),
+            Text(
+              'Location',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: 10),
+
+            Container(height: 200, child: Card(child: MapboxWidget())),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+        margin: EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
+            SizedBox(height: 5),
+            Text(
+              label,
+              style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+            ),
+            Text(
+              value,
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

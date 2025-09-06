@@ -41,6 +41,18 @@ class PropertyCard extends StatelessWidget {
                   imageUrl,
                   height: 200,
                   width: double.infinity,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child; // image loaded
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    ); // show loader
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+                      fit: BoxFit.cover,
+                    ); // fallback image
+                  },
                   fit: BoxFit.cover,
                 ),
               ),

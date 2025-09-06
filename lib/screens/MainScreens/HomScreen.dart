@@ -17,22 +17,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
-    //
-    // final String serverUrl = 'http://10.0.2.2:9000/';
-
-    // Future<dynamic> fetchResponse() async {
-    //   try {
-    //     final response = await http.get(Uri.parse(serverUrl));
-    //     if (response.statusCode == 200) {
-    //       print(response.body); // Debug log
-    //       return jsonDecode(response.body);
-    //     } else {
-    //       throw Exception("Failed with status: ${response.statusCode}");
-    //     }
-    //   } catch (e) {
-    //     throw Exception("Error: $e");
-    //   }
-    // }
 
     final userDetails = ref.watch(userDetailsProvider);
     final themeMode = ref.watch(themeControllerProvider);
@@ -61,19 +45,19 @@ class _HomeScreenState extends ConsumerState {
                       },
                       icon: Icon(Icons.location_on),
                     ),
-                    Text('Pune'),
                   ],
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  themeMode == ThemeMode.dark
-                      ? Icons.light_mode
-                      : Icons.dark_mode,
-                ),
-                onPressed: () =>
-                    ref.read(themeControllerProvider.notifier).toggleTheme(),
-              ),
+              // IconButton(
+              //   icon: Icon(
+              //     themeMode == ThemeMode.dark
+              //         ? Icons.light_mode
+              //         : Icons.dark_mode,
+              //   ),
+              //   onPressed: () =>
+              //       ref.read(themeControllerProvider.notifier).toggleTheme(),
+              // ),
+              themeButton(ref),
             ],
           ),
           drawer: Drawer(
@@ -159,4 +143,17 @@ class _HomeScreenState extends ConsumerState {
       loading: () => Center(child: CircularProgressIndicator()),
     );
   }
+
+}
+IconButton themeButton(WidgetRef ref){
+  final themeMode = ref.watch(themeControllerProvider);
+  return  IconButton(
+    icon: Icon(
+      themeMode == ThemeMode.dark
+          ? Icons.light_mode
+          : Icons.dark_mode,
+    ),
+    onPressed: () =>
+        ref.read(themeControllerProvider.notifier).toggleTheme(),
+  );
 }

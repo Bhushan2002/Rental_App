@@ -38,11 +38,57 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       titleLarge: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      displayLarge: TextStyle(
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      displaySmall: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: Colors.blue,
+        color: Colors.black,
       ),
+      titleMedium: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      headlineLarge: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+
+      headlineMedium: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+
+      headlineSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+
       bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+      bodyLarge: TextStyle(fontSize: 20, color: Colors.black87),
+      bodySmall: TextStyle(fontSize: 14, color: Colors.black87),
+
     ),
     iconTheme: IconThemeData(color: const Color.fromARGB(255, 26, 46, 81)),
     cardTheme: CardThemeData(
@@ -104,11 +150,55 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       titleLarge: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      displayLarge: TextStyle(
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      displaySmall: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: Colors.blue[200],
+        color: Colors.white,
       ),
+
+      titleMedium: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      headlineLarge: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
+      bodyLarge: TextStyle(fontSize: 20, color: Colors.white70),
+      bodySmall: TextStyle(fontSize: 14, color: Colors.white70),
     ),
     iconTheme: IconThemeData(color: Colors.white30),
     cardTheme: CardThemeData(
@@ -125,11 +215,11 @@ class AppTheme {
     ),
     primaryTextTheme: TextTheme(
       titleLarge: TextStyle(
-        fontSize: 40,
+        fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      bodyLarge: TextStyle(fontSize: 24, color: Colors.white),
+      bodyLarge: TextStyle(fontSize: 20, color: Colors.white),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
       titleMedium: TextStyle(fontSize: 20, color: Colors.white),
     ),

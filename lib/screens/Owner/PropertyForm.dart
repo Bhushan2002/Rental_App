@@ -20,11 +20,12 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  final _locationController = TextEditingController();
+  final _streetController = TextEditingController();
   final _bedroomsController = TextEditingController();
   final _bathroomsController = TextEditingController();
   final _bhkController = TextEditingController();
   final _areaController = TextEditingController();
+  final _postalCodeController = TextEditingController();
 
   // Apartment specific controllers
   final _floorController = TextEditingController();
@@ -71,13 +72,60 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
     'Pet Friendly',
     'Furnished',
   ];
+  final List<String> _metroCities = [
+    'Mumbai',
+    'Pune',
+    'Nagpur',
+    'Thane',
+    'Nashik',
+    'Chhatrapati Sambhaji Nagar (Aurangabad)',
+  ];
+  final List<String> _countries = [
+    'India',
+    'United States',
+    'United Kingdom',
+
+  ];
+  final List<String> _states = [
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+  ];
+  String? _selectedCountry;
+  String? _selectedState;
+  String? _selectedCity;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _locationController.dispose();
+    _streetController.dispose();
     _bedroomsController.dispose();
     _bathroomsController.dispose();
     _bhkController.dispose();
@@ -171,7 +219,11 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
         'title': _titleController.text,
         'description': _descriptionController.text,
         'price': double.parse(_priceController.text),
-        'location': _locationController.text,
+        'street': _streetController.text,
+        'city': _selectedCity,
+        'state': _selectedState,
+        'country': _selectedCountry,
+        'postalCode': _postalCodeController.text,
         'bedrooms': int.parse(_bedroomsController.text),
         'bathrooms': int.parse(_bathroomsController.text),
         'bhk': int.parse(_bhkController.text),
@@ -299,20 +351,40 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                       tstyle:
                           Theme.of(context).primaryTextTheme.bodyMedium
                               as TextStyle,
-                      label: 'Price (\$) *',
+                      label: 'Price*',
                       keyboardType: TextInputType.number,
                       validator: (value) => _validateNumber(value, 'price'),
                     ),
                     const SizedBox(height: 12),
                     buildTextFormField(
-                      controller: _locationController,
+                      controller: _streetController,
                       tstyle:
                           Theme.of(context).primaryTextTheme.bodyMedium
                               as TextStyle,
-                      label: 'Location *',
+                      label: 'Street*',
                       validator: (value) =>
-                          _validateRequired(value, 'location'),
+                          _validateRequired(value, 'street'),
+                    ), const SizedBox(height: 12),
+                    buildTextFormField(
+                      controller: _postalCodeController,
+                      tstyle:
+                          Theme.of(context).primaryTextTheme.bodyMedium
+                              as TextStyle,
+                      label: 'Postal Code*',
+                      validator: (value) =>
+                          _validateRequired(value, 'Postal Code'),
                     ),
+                    const SizedBox(height: 12),
+                    buildDropDowns("Please select a metro city", "Select a City", _metroCities, 'City', Icons.location_city, _selectedCity, (value){
+                      _validateRequired(value, 'city');
+                    }),
+                    const SizedBox(height: 12),
+                    buildDropDowns("please select a state", "select a State", _states, 'State', Icons.location_city, _selectedState, (value){
+                      _validateRequired(value, "state");
+                    }), const SizedBox(height: 12),
+                    buildDropDowns("please select a country", "select a Country", _countries, 'Country', Icons.location_city, _selectedCountry, (value){
+                      _validateRequired(value, "Country");
+                    }),
 
                     const SizedBox(height: 24),
 
@@ -336,7 +408,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                         Expanded(
                           child: buildTextFormField(
                             controller: _bathroomsController,
-                            label: 'Bathrooms *',
+                            label: 'Bathrooms*',
                             tstyle:
                                 Theme.of(context).primaryTextTheme.bodyMedium
                                     as TextStyle,
@@ -356,7 +428,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                             tstyle:
                                 Theme.of(context).primaryTextTheme.bodyMedium
                                     as TextStyle,
-                            label: 'BHK *',
+                            label: 'BHK*',
                             keyboardType: TextInputType.number,
                             validator: (value) =>
                                 _validateInteger(value, 'BHK'),
@@ -366,7 +438,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                         Expanded(
                           child: buildTextFormField(
                             controller: _areaController,
-                            label: 'Area (sq ft) *',
+                            label: 'Area (sq ft)*',
                             keyboardType: TextInputType.number,
                             tstyle:
                                 Theme.of(context).primaryTextTheme.bodyMedium
@@ -594,6 +666,40 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
           title: const Text('Is Furnished'),
           value: _isFurnished,
           onChanged: (value) => setState(() => _isFurnished = value!),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDropDowns(String title,String hintText,List<String> list,String label, IconData icon, String? selected , onChange){
+    return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 16),
+        // This is the core dropdown widget.
+        DropdownButtonFormField<String>(
+          // The text that appears before a selection is made.
+          hint:  Text(hintText, style: Theme.of(context).textTheme.bodyMedium,),
+          // The current value of the dropdown.
+          value: selected,
+          // The list of items the user can select from.
+          items: list.map((String i) {
+            return DropdownMenuItem<String>(
+
+              value: i,
+              child: Text(i, style: Theme.of(context).textTheme.bodySmall,overflow: TextOverflow.fade,),
+            );
+          }).toList(),
+          // This function is called when the user selects an item.
+          onChanged: onChange,
+          decoration: InputDecoration(
+            labelText: label,
+            prefixIcon: Icon(icon),
+          ),
         ),
       ],
     );

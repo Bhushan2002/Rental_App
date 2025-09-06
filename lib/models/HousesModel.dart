@@ -12,7 +12,11 @@ class HousesModel extends Property {
     required String title,
     required String description,
     required double price,
-    required String location,
+    required String street,
+    required String city,
+    required String state,
+    required String country,
+    required String postalCode,
     required List<String> images,
     required int bathrooms,
     required int bedrooms,
@@ -21,6 +25,7 @@ class HousesModel extends Property {
     required DateTime createdAt,
     required bool isAvailable,
     required String ownerId,
+    Coordinates? coordinates,
     required List<String> amenities,
     required this.floors,
     required this.hasGarden,
@@ -33,7 +38,12 @@ class HousesModel extends Property {
          title: title,
          description: description,
          price: price,
-         location: location,
+         street: street,
+         city: city,
+         state: state,
+         country: country,
+         postalCode: postalCode,
+         coordinates: coordinates,
          images: images,
          bedrooms: bedrooms,
          bathrooms: bathrooms,
@@ -58,27 +68,41 @@ class HousesModel extends Property {
 
   factory HousesModel.fromMap(Map<String, dynamic> map) {
     return HousesModel(
-      id: map['id'],
-      title: map['title'],
-      description: map['description'],
-      price: map['price']?.toDouble() ?? 0.0,
-      location: map['location'],
-      images: List<String>.from(map['images']),
-      bedrooms: map['bedrooms']?.toInt() ?? 0,
-      bathrooms: map['bathrooms']?.toInt() ?? 0,
-      area: map['area']?.toDouble() ?? 0.0,
+      id: (map['_id'] ?? '').toString(),
+      title: (map['title'] ?? '').toString(),
+      description: (map['description'] ?? '').toString(),
+      price: (map['price'] ?? 0).toDouble(),
+      street: (map['street'] ?? '').toString(),
+      city: (map['city'] ?? '').toString(),
+      state: (map['state'] ?? '').toString(),
+      country: (map['country'] ?? '').toString(),
+      postalCode: (map['postalCode'] ?? '').toString(),
+      images: (map['images'] != null)
+          ? List<String>.from(map['images'])
+          : <String>[],
+      bedrooms: map['bedrooms'] ?? 0,
+      bathrooms: map['bathrooms'] ?? 0,
+      area: (map['area'] ?? 0).toDouble(),
       isAvailable: map['isAvailable'] ?? true,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
-      ownerId: map['ownerId'],
-      amenities: List<String>.from(map['amenities']),
-      floors: map['floors']?.toInt() ?? 1,
+      createdAt: (map['createdAt'] != null)
+          ? DateTime.tryParse(map['createdAt'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      ownerId: (map['ownerId'] ?? '').toString(),
+      amenities: (map['amenities'] != null)
+          ? List<String>.from(map['amenities'])
+          : <String>[],
+      coordinates: map['coordinates'] != null
+          ? Coordinates.fromMap(map['coordinates'])
+          : null,
+      floors: map['floors'] ?? 1,
       hasGarden: map['hasGarden'] ?? false,
-      landArea: map['landArea']?.toDouble() ?? 0.0,
+      landArea: (map['landArea'] ?? 0).toDouble(),
       hasPool: map['hasPool'] ?? false,
       isFurnished: map['isFurnished'] ?? false,
       bhk: map['bhk'] ?? 0,
     );
   }
+
   @override
   String toString() {
     return 'House(${super.toString()}, floors: $floors, landArea: $landArea)';

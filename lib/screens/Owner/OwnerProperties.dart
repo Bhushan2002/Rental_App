@@ -30,12 +30,13 @@ class _OwnerpropertiesState extends ConsumerState {
             itemCount: properties.length,
             itemBuilder: (context, index) {
               final property = properties[index];
+              final address = '${property.street}, ${property.city}';
               return InkWell(
                 child: PropertyCard(
                   title: property.title,
                   imageUrl: property.images[0],
                   price: property.price,
-                  address: property.location,
+                  address: address,
                   baths: property.bathrooms,
                   beds: property.bedrooms,
                   bhk: property.bhk,
