@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class PropertySearchCard extends StatelessWidget {
   const PropertySearchCard({super.key});
@@ -8,9 +9,18 @@ class PropertySearchCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDarkMode ? Colors.grey[850] : Colors.white;
     final textColor = isDarkMode ? Colors.white70 : Colors.black54;
+
+    final List<String> cities = [
+      'Pune',
+      'Mumbai',
+      'Bangalore',
+      'Chennai',
+      'Delhi',
+    ];
+
     return DefaultTabController(
-      length: 3,
-      initialIndex: 2,
+      length: 2,
+      initialIndex: 0,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
         child: Card(
@@ -40,48 +50,70 @@ class PropertySearchCard extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
                     ),
-                    tabs: const [
+                    tabs: [
                       Tab(text: 'Flats'),
                       Tab(text: 'Houses'),
-                      Tab(text: 'PGs'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Search Bar
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search Localities or Landmarks',
-                    hintStyle: TextStyle(color: textColor),
-                    filled: false, // We use the card's color instead
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Colors.blue[900]!,
-                        width: 1,
+                TypeAheadField(
+                  // ...
+                  builder: (context, controller, focusNode) {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      // obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Search Localities or Landmarks',
+                        hintStyle: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: textColor),
+                        filled: false,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Colors.blue[900]!,
+                            width: 1,
+                          ),
+                        ),
+                        suffixIcon: Container(
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[900],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.search, color: Colors.white),
+                            onPressed: () {},
+                          ),
+                        ),
                       ),
-                    ),
-                    suffixIcon: Container(
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[900],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.search, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
+                    );
+                  },
+                  itemBuilder: (BuildContext context, value) {
+                    return ListTile(title: Text(value.toString()));
+                  },
+                  onSelected: (value) {},
+                  suggestionsCallback: (String search) {
+                    return cities
+                        .where(
+                          (city) => city.toLowerCase().startsWith(
+                            search.toLowerCase(),
+                          ),
+                        )
+                        .toList();
+                  },
                 ),
+
                 const SizedBox(height: 16),
               ],
             ),

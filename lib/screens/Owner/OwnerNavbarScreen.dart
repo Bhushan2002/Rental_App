@@ -41,7 +41,10 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MapboxWidget()),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            MapboxWidget(latitude: 18.5204, longitute: 73.8567),
+                      ),
                     );
                   },
                   icon: Icon(Icons.location_on),

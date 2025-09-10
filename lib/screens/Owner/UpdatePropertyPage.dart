@@ -135,8 +135,13 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
               "₹ ${widget.property.price.toStringAsFixed(0)}/month",
               style: textTheme.bodyLarge,
             ),
+            Text(
+              '${widget.property.coordinates!.lat.toString()} , ${widget.property.coordinates!.lon.toString()}',
+              style: textTheme.bodySmall,
+            ),
             SizedBox(height: 10),
             Divider(thickness: 0.9),
+
             Text(
               "Description",
               style: textTheme.titleMedium?.copyWith(
@@ -261,7 +266,13 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
 
             SizedBox(height: 10),
 
-            Container(height: 200, child: Card(child: MapboxWidget())),
+            Container(
+              height: 300,
+              child: MapboxWidget(
+                latitude: widget.property.coordinates!.lat,
+                longitute: widget.property.coordinates!.lon,
+              ),
+            ),
             SizedBox(height: 20),
           ],
         ),

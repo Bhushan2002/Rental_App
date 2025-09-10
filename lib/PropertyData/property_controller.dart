@@ -72,6 +72,11 @@ class PropertyController extends StateNotifier<bool> {
   }
 }
 
+final getAllPropertiesProvider = FutureProvider<List<Property>>((ref) {
+  final propertyRepository = ref.watch(propertyRepositoryProvider);
+  return propertyRepository.getAllProperties();
+});
+
 final myPropertiesProvider = FutureProvider<List<Property>>((ref) {
   final propertyRepository = ref.watch(propertyRepositoryProvider);
   return propertyRepository.getMyProperties();

@@ -19,9 +19,7 @@ Future<void> main() async {
 }
 
 Future<void> setup() async {
-  MapboxOptions.setAccessToken(
-    ApiConstants.MAPBOXKEY,
-  );
+  MapboxOptions.setAccessToken(ApiConstants.MAPBOXKEY);
 }
 
 class MyApp extends ConsumerWidget {

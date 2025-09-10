@@ -34,7 +34,9 @@ class _OwnerpropertiesState extends ConsumerState {
               return InkWell(
                 child: PropertyCard(
                   title: property.title,
-                  imageUrl: property.images[0],
+                  imageUrl: property.images.isNotEmpty
+                      ? property.images[0]
+                      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcCBHgbS23kyBw2r8Pquu19UtKZnrZmFUx1g&s",
                   price: property.price,
                   address: address,
                   baths: property.bathrooms,

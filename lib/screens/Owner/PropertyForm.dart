@@ -376,14 +376,18 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                     ),
                     const SizedBox(height: 12),
                     buildDropDowns("Please select a metro city", "Select a City", _metroCities, 'City', Icons.location_city, _selectedCity, (value){
-                      _validateRequired(value, 'city');
+                      setState(() {
+                        _selectedCity = value;
+                      });
                     }),
                     const SizedBox(height: 12),
                     buildDropDowns("please select a state", "select a State", _states, 'State', Icons.location_city, _selectedState, (value){
-                      _validateRequired(value, "state");
+                      setState(() {
+                        _selectedState = value;
+                      });
                     }), const SizedBox(height: 12),
                     buildDropDowns("please select a country", "select a Country", _countries, 'Country', Icons.location_city, _selectedCountry, (value){
-                      _validateRequired(value, "Country");
+                      _selectedCountry = value;
                     }),
 
                     const SizedBox(height: 24),
@@ -398,7 +402,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                             tstyle:
                                 Theme.of(context).primaryTextTheme.bodyMedium
                                     as TextStyle,
-                            label: 'Bedrooms *',
+                            label: 'Bedrooms*',
                             keyboardType: TextInputType.number,
                             validator: (value) =>
                                 _validateInteger(value, 'bedrooms'),
