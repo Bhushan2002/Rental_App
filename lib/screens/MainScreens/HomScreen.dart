@@ -8,7 +8,6 @@ import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/CustomDrawer.dart';
 import 'package:rental_application/widgets/FullMap.dart';
-import 'package:rental_application/widgets/MapWidget.dart';
 import 'package:rental_application/widgets/PropertyCard.dart';
 import 'package:rental_application/widgets/SearchProperty.dart';
 
@@ -45,7 +44,8 @@ class _HomeScreenState extends ConsumerState {
                           MaterialPageRoute(builder: (context) => FullMap()),
                         );
                       },
-                      icon: Icon(Icons.location_on),
+                      icon: Icon(Icons.map_outlined),
+                      tooltip: 'View Map',
                     ),
                   ],
                 ),
