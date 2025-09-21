@@ -1,11 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:rental_application/auth/auth_provider.dart';
 
 import 'package:rental_application/cors/ApiConstants.dart';
 import 'package:rental_application/models/PropertyModel.dart';
+import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/MainScreens/HomScreen.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyForm.dart';
 import 'package:rental_application/theme/themeProvider.dart';
@@ -27,51 +32,56 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeControllerProvider);
     final textTheme = Theme.of(context).primaryTextTheme;
-
-    print(widget.property.coordinates);
+    final role = ref.watch(userDetailsProvider).value ?? UserRole.tenant;
+    // print(widget.property.coordinates);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.property.title),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => UpdatePropertyForm(property: widget.property),
-                ),
-              );
-            },
-            icon: Icon(Icons.edit),
-          ),
-          IconButton(
-            onPressed: () {
-              // create a alert box
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    backgroundColor: Theme.of(context).cardColor,
-                    title: Text(
-                      "Are you sure you want to delete this property?",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    content: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[400],
+          (role == 'owner'
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            UpdatePropertyForm(property: widget.property),
                       ),
-                      child: Text('Delete'),
-                    ),
-                  );
-                },
-              );
-            },
-            icon: Icon(Icons.delete),
-          ),
+                    );
+                  },
+                  icon: Icon(Icons.edit),
+                )
+              : Container()),
+          (role == 'owner'
+              ? IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: Theme.of(context).cardColor,
+                          title: Text(
+                            "Are you sure you want to delete this property?",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          content: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[400],
+                            ),
+                            child: Text('Delete'),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.delete),
+                )
+              : Container()),
+
           themeButton(ref),
         ],
       ),
@@ -135,13 +145,9 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
               "₹ ${widget.property.price.toStringAsFixed(0)}/month",
               style: textTheme.bodyLarge,
             ),
-            Text(
-              '${widget.property.coordinates!.lat.toString()} , ${widget.property.coordinates!.lon.toString()}',
-              style: textTheme.bodySmall,
-            ),
+
             SizedBox(height: 10),
             Divider(thickness: 0.9),
-
             Text(
               "Description",
               style: textTheme.titleMedium?.copyWith(

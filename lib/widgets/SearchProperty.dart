@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:rental_application/screens/MainScreens/PropertyByCity.dart';
 
-class PropertySearchCard extends StatelessWidget {
+class PropertySearchCard extends StatefulWidget {
   const PropertySearchCard({super.key});
 
+  @override
+  State<PropertySearchCard> createState() => _PropertySearchCardState();
+}
+
+class _PropertySearchCardState extends State<PropertySearchCard> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -18,6 +24,7 @@ class PropertySearchCard extends StatelessWidget {
       'Delhi',
     ];
 
+    String _selectedCity = '';
     return DefaultTabController(
       length: 2,
       initialIndex: 0,
@@ -65,7 +72,8 @@ class PropertySearchCard extends StatelessWidget {
                       focusNode: focusNode,
                       // obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Search Localities or Landmarks',
+                        hintText: _selectedCity,
+                        labelText: 'Search by city',
                         hintStyle: Theme.of(
                           context,
                         ).textTheme.bodyMedium?.copyWith(color: textColor),
@@ -93,7 +101,18 @@ class PropertySearchCard extends StatelessWidget {
                           ),
                           child: IconButton(
                             icon: const Icon(Icons.search, color: Colors.white),
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedCity = 'Mumbai';
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PropertyByCity(city: _selectedCity),
+                                  ),
+                                );
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -102,12 +121,27 @@ class PropertySearchCard extends StatelessWidget {
                   itemBuilder: (BuildContext context, value) {
                     return ListTile(title: Text(value.toString()));
                   },
-                  onSelected: (value) {},
-                  suggestionsCallback: (String search) {
+                  onSelected: (value) {
+                    setState(() {
+                      _selectedCity = value.toString();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PropertyByCity(city: _selectedCity),
+                        ),
+                      );
+                    });
+                  },
+                  suggestionsCallback: (String pattern) {
+                    if (pattern.isEmpty) {
+                      // show all when empty (optional)
+                      return cities;
+                    }
                     return cities
                         .where(
                           (city) => city.toLowerCase().startsWith(
-                            search.toLowerCase(),
+                            pattern.toLowerCase(),
                           ),
                         )
                         .toList();

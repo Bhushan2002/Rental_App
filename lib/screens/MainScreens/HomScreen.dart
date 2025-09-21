@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/PropertyData/property_controller.dart';
 
 import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/screens/MainScreens/ChatBotScreen.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/CustomDrawer.dart';
+import 'package:rental_application/widgets/FullMap.dart';
 import 'package:rental_application/widgets/MapWidget.dart';
 import 'package:rental_application/widgets/PropertyCard.dart';
 import 'package:rental_application/widgets/SearchProperty.dart';
@@ -40,12 +42,7 @@ class _HomeScreenState extends ConsumerState {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => MapboxWidget(
-                              latitude: 18.5204,
-                              longitute: 73.8567,
-                            ),
-                          ),
+                          MaterialPageRoute(builder: (context) => FullMap()),
                         );
                       },
                       icon: Icon(Icons.location_on),
@@ -105,6 +102,15 @@ class _HomeScreenState extends ConsumerState {
                 ),
               ],
             ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatbotScreen()),
+              );
+            },
+            child: const Icon(Icons.chat),
           ),
         );
       },

@@ -163,6 +163,27 @@ class PropertyRepository {
     }
   }
 
+  Future<List<Property>> getPropertiesByCity(String city) async {
+    try {
+      final city = 'Pune';
+      final res = await http.get(
+        (Uri.parse(ApiConstants.propertyByCity(city))),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      );
+      if (res.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(res.body)['data'];
+        return responseData
+            .map<Property>((json) => Property.fromJson(json))
+            .toList();
+      } else {
+        final errorData = jsonDecode(res.body);
+        throw Exception(errorData['message'] ?? 'Failed to fetch properties.');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<List<Property>> getMyProperties() async {
     try {
       final user = FirebaseAuth.instance.currentUser;

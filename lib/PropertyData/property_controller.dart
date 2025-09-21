@@ -81,3 +81,11 @@ final myPropertiesProvider = FutureProvider<List<Property>>((ref) {
   final propertyRepository = ref.watch(propertyRepositoryProvider);
   return propertyRepository.getMyProperties();
 });
+
+final propertiesByCityProvider = FutureProvider.family<List<Property>, String>((
+  ref,
+  city,
+) {
+  final propertyRepository = ref.watch(propertyRepositoryProvider);
+  return propertyRepository.getPropertiesByCity(city);
+});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PropertyCard extends StatelessWidget {
+class PropertyCard extends StatefulWidget {
   final String title;
   final String imageUrl;
   final double price;
@@ -22,6 +22,13 @@ class PropertyCard extends StatelessWidget {
   });
 
   @override
+  State<PropertyCard> createState() => _PropertyCardState();
+}
+
+class _PropertyCardState extends State<PropertyCard> {
+  bool _isfav = false;
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
@@ -38,7 +45,7 @@ class PropertyCard extends StatelessWidget {
                   top: Radius.circular(16),
                 ),
                 child: Image.network(
-                  imageUrl,
+                  widget.imageUrl,
                   height: 200,
                   width: double.infinity,
                   loadingBuilder: (context, child, loadingProgress) {
@@ -83,12 +90,19 @@ class PropertyCard extends StatelessWidget {
                 child: CircleAvatar(
                   backgroundColor: Colors.white54,
                   child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite_border, color: Colors.red),
+                    onPressed: () {
+                      setState(() {
+                        _isfav = !_isfav;
+                      });
+                    },
+                    icon: Icon(
+                      _isfav ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
                   ),
                 ),
               ),
-              // Details over image
+
               Positioned(
                 bottom: 10,
                 left: 12,
@@ -96,9 +110,9 @@ class PropertyCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _infoChip("$baths baths"),
-                    _infoChip("$beds beds"),
-                    _infoChip("$bhk BHK"),
+                    _infoChip("${widget.baths} baths"),
+                    _infoChip("${widget.beds} beds"),
+                    _infoChip("${widget.bhk} BHK"),
                   ],
                 ),
               ),
@@ -111,15 +125,15 @@ class PropertyCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: Theme.of(context).primaryTextTheme.titleMedium,
                 ),
                 Text(
-                  '₹ $price',
+                  '₹ ${widget.price}',
                   style: Theme.of(context).primaryTextTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
-                Text(address, style: TextStyle(color: Colors.grey[600])),
+                Text(widget.address, style: TextStyle(color: Colors.grey[600])),
               ],
             ),
           ),
@@ -128,7 +142,6 @@ class PropertyCard extends StatelessWidget {
     );
   }
 
-  // Helper widget for chips
   Widget _infoChip(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

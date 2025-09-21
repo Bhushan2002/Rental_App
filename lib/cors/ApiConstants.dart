@@ -13,6 +13,8 @@ class ApiConstants {
 
   static const String allProperties =
       'http://10.0.2.2:9000/properties/all-properties';
+  static String propertyByCity(String city) =>
+      'http://10.0.2.2:9000/properties/$city';
 
   static const String ownerProperties =
       'http://10.0.2.2:9000/properties/ownerproperties';
