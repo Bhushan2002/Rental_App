@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/models/UserModel.dart';
 
-class PropertyCard extends StatefulWidget {
+class PropertyCard extends ConsumerStatefulWidget {
   final String title;
   final String imageUrl;
   final double price;
@@ -22,14 +25,15 @@ class PropertyCard extends StatefulWidget {
   });
 
   @override
-  State<PropertyCard> createState() => _PropertyCardState();
+  ConsumerState<PropertyCard> createState() => _PropertyCardState();
 }
 
-class _PropertyCardState extends State<PropertyCard> {
+class _PropertyCardState extends ConsumerState<PropertyCard> {
   bool _isfav = false;
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(userDetailsProvider).value ?? UserRole.tenant;
     return Card(
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -84,24 +88,27 @@ class _PropertyCardState extends State<PropertyCard> {
                   ),
                 ),
               ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white54,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isfav = !_isfav;
-                      });
-                    },
-                    icon: Icon(
-                      _isfav ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
-              ),
+
+              role != 'owner'
+                  ? Positioned(
+                      top: 12,
+                      right: 12,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white54,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isfav = !_isfav;
+                            });
+                          },
+                          icon: Icon(
+                            _isfav ? Icons.favorite : Icons.favorite_border,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(),
 
               Positioned(
                 bottom: 10,

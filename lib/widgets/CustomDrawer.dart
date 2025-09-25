@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rental_application/auth/auth_provider.dart';
+import 'package:rental_application/screens/Owner/Profile.dart';
 
 class Customdrawer extends ConsumerWidget {
   const Customdrawer({super.key});
@@ -23,6 +24,19 @@ class Customdrawer extends ConsumerWidget {
               'Menu',
               style: TextStyle(color: Colors.white, fontSize: 24),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.person_4_rounded),
+            title: Text(
+              'Profile',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProfilePage()),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.home_repair_service),

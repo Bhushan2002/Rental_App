@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/theme/themeProvider.dart';
 
 Widget buildfirstAndLastNameField(
   TextEditingController firstnameController,
@@ -21,7 +19,6 @@ Widget inputField(String text, Icon? icon, TextEditingController? controller) {
     cursorColor: Colors.grey[500],
     style: TextStyle(color: Colors.black54),
     decoration: InputDecoration(
-
       labelText: text,
       labelStyle: TextStyle(color: Colors.black54),
       prefixIcon: icon,
@@ -29,22 +26,17 @@ Widget inputField(String text, Icon? icon, TextEditingController? controller) {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       filled: true,
       fillColor: Colors.grey[300],
-
     ),
   );
 }
 
 // Widget for the header section
-Widget buildHeader( context, String title) {
+Widget buildHeader(context, String title) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        title,
-        style: Theme.of(context).primaryTextTheme.titleLarge
-      ),
+      Text(title, style: Theme.of(context).primaryTextTheme.titleLarge),
       SizedBox(height: 8.0),
-
     ],
   );
 }
@@ -55,7 +47,6 @@ Widget buildForgotPasswordLink() {
     alignment: Alignment.centerRight,
     child: TextButton(
       onPressed: () {
-
         print('Forgot Password Tapped');
       },
       child: const Text(
@@ -153,8 +144,6 @@ Widget socialButton(
   );
 }
 
-
-
 // Post Property Form  Fields
 
 Widget buildTextFormField({
@@ -164,17 +153,13 @@ Widget buildTextFormField({
   int? maxLines,
   required TextStyle tstyle,
   String? Function(String?)? validator,
-
-
 }) {
   return TextFormField(
     controller: controller,
     decoration: InputDecoration(
       labelText: label,
       labelStyle: tstyle,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       filled: true,
       fillColor: Colors.white12,
     ),
@@ -184,15 +169,9 @@ Widget buildTextFormField({
   );
 }
 
-
 Widget buildSectionTitle(String title, context) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
-    child: Text(
-      title,
-      style:Theme.of(context).primaryTextTheme.titleMedium,
-    ),
+    child: Text(title, style: Theme.of(context).primaryTextTheme.titleMedium),
   );
 }
-
-

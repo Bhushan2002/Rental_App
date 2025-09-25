@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/models/PropertyModel.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/PropertyData/property_controller.dart';
 
+// Helper class to implement the click listener
 class _MyPointAnnotationClickListener
     implements OnPointAnnotationClickListener {
   final Function(PointAnnotation) onAnnotationClicked;
@@ -29,6 +29,38 @@ class FullMap extends ConsumerStatefulWidget {
 
 class _FullMapState extends ConsumerState<FullMap> {
   Property? _selectedProperty;
+  MapboxMap? _mapboxMap;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isMapReady = false; // Flag to track if the map is ready
+
+  // Simple map for city coordinates
+  final Map<String, Position> _cityCoordinates = {
+    'pune': Position(73.8567, 18.5204),
+    'mumbai': Position(72.8777, 19.0760),
+    'bangalore': Position(77.5946, 12.9716),
+    'delhi': Position(77.2090, 28.6139),
+  };
+
+  void _searchCity(String cityName) {
+    final city = cityName.toLowerCase().trim();
+    if (_cityCoordinates.containsKey(city)) {
+      final coordinates = _cityCoordinates[city]!;
+      _mapboxMap?.flyTo(
+        CameraOptions(center: Point(coordinates: coordinates), zoom: 10),
+        MapAnimationOptions(duration: 1500), // Animate over 1.5 seconds
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('City not found. Try Pune, Mumbai, etc.')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +68,7 @@ class _FullMapState extends ConsumerState<FullMap> {
     final propertiesAsyncValue = ref.watch(getAllPropertiesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Properties on Map')),
+      appBar: AppBar(title: const Text('Search Map')),
       body: propertiesAsyncValue.when(
         data: (properties) {
           return Stack(
@@ -45,7 +77,7 @@ class _FullMapState extends ConsumerState<FullMap> {
                 key: const ValueKey("mapWidget"),
                 androidHostingMode: AndroidPlatformViewHostingMode.TLHC_HC,
                 cameraOptions: CameraOptions(
-                  zoom: 12,
+                  zoom: 10,
                   center: Point(
                     coordinates: Position(
                       73.8567, // Default to Pune
@@ -54,57 +86,53 @@ class _FullMapState extends ConsumerState<FullMap> {
                   ),
                 ),
                 styleUri: themeMode == ThemeMode.dark
-                    ? 'mapbox://styles/bhushan002/cmeqx95kk002y01sf7p5h1p55'
-                    : "mapbox://styles/bhushan002/cmeqxdzsb009401qt4tgrds1z",
-                onMapCreated: (mapboxMap) =>
-                    _onMapCreated(mapboxMap, properties),
+                    ? MapboxStyles.DARK
+                    : MapboxStyles.LIGHT,
+                onMapCreated: (mapboxMap) {
+                  _mapboxMap = mapboxMap;
+                  // Once the map is created, set the flag to true and rebuild
+                  setState(() {
+                    _isMapReady = true;
+                  });
+                  _onMapCreated(mapboxMap, properties);
+                },
               ),
               Positioned(
-                top: 40,
-                left: 20,
-                right: 20,
+                top: 10,
+                left: 15,
+                right: 15,
                 child: Container(
+                  decoration: BoxDecoration(
+                    color: themeMode == ThemeMode.dark
+                        ? Colors.grey[800]
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
                   child: TextField(
+                    controller: _searchController,
+                    // Enable/disable the text field based on the map's readiness
+                    enabled: _isMapReady,
                     decoration: InputDecoration(
-                      hintText: 'Search location',
-                      filled: true,
-                      fillColor: themeMode == ThemeMode.dark
-                          ? Colors.black54
-                          : Colors.white54,
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide.none,
+                      // Change hint text based on the map's readiness
+                      hintText: _isMapReady
+                          ? 'Search for a city...'
+                          : 'Map is loading...',
+                      prefixIcon: const Icon(Icons.search),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 20,
                       ),
                     ),
                     onSubmitted: (value) {
-                      [
-                            "pune",
-                            "mumbai",
-                            "bangalore",
-                          ].contains(value.toLowerCase())
-                          ? MapWidget(
-                              cameraOptions: CameraOptions(
-                                center: Point(
-                                  coordinates: Position(
-                                    value.toLowerCase() == "pune"
-                                        ? 73.8567
-                                        : value.toLowerCase() == "mumbai"
-                                        ? 72.8777
-                                        : 77.5946,
-                                    value.toLowerCase() == "pune"
-                                        ? 18.5204
-                                        : value.toLowerCase() == "mumbai"
-                                        ? 19.0760
-                                        : 12.9716,
-                                  ),
-                                ),
-                                zoom: 12,
-                              ),
-                            )
-                          : ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Location not found')),
-                            );
+                      _searchCity(value);
                     },
                   ),
                 ),
@@ -127,7 +155,7 @@ class _FullMapState extends ConsumerState<FullMap> {
                     child: Card(
                       color: themeMode == ThemeMode.dark
                           ? Colors.black45
-                          : Colors.white38,
+                          : Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -169,7 +197,7 @@ class _FullMapState extends ConsumerState<FullMap> {
     final pointAnnotationManager = await mapboxMap.annotations
         .createPointAnnotationManager();
 
-    final ByteData bytes = await rootBundle.load("assets/images/pin.png");
+    final ByteData bytes = await rootBundle.load("assets/images/location.png");
     final Uint8List markerImage = bytes.buffer.asUint8List();
 
     final List<PointAnnotationOptions> options = [];
@@ -192,11 +220,10 @@ class _FullMapState extends ConsumerState<FullMap> {
 
     final annotations = await pointAnnotationManager.createMulti(options);
 
-    // Create an instance of our listener and pass it to the manager
     pointAnnotationManager.addOnPointAnnotationClickListener(
       _MyPointAnnotationClickListener((clickedAnnotation) {
         for (var i = 0; i < annotations.length; i++) {
-          if (annotations[i]?.id == clickedAnnotation.id) {
+          if (annotations[i]!.id == clickedAnnotation.id) {
             setState(() {
               _selectedProperty = properties[i];
             });

@@ -1,13 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
-
 import 'package:rental_application/cors/ApiConstants.dart';
 import 'package:rental_application/models/PropertyModel.dart';
 import 'package:rental_application/models/UserModel.dart';
@@ -27,12 +21,18 @@ class UpdatePropertyPage extends ConsumerStatefulWidget {
 class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
   // Replace with your Mapbox access token
   final String mapboxAccessToken = ApiConstants.MAPBOXKEY;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeControllerProvider);
+    // final themeMode = ref.watch(themeControllerProvider);
     final textTheme = Theme.of(context).primaryTextTheme;
     final role = ref.watch(userDetailsProvider).value ?? UserRole.tenant;
+    final user = ref.watch(userDetailsProvider);
+
     // print(widget.property.coordinates);
     return Scaffold(
       appBar: AppBar(
@@ -85,6 +85,84 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
           themeButton(ref),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.black45),
+        ),
+
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Contact Owner",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                content: SizedBox(
+                  height: 400,
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _custometextField(
+                        nameController,
+                        "${user.value!.firstName} ${user.value!.lastName}",
+                        false,
+                      ),
+                      _custometextField(
+                        emailController,
+                        "${user.value!.email}",
+                        false,
+                      ),
+                      TextField(
+                        controller: messageController,
+                        maxLines: 5,
+
+                        cursorColor: Colors.grey[500],
+                        style: TextStyle(color: Colors.black54),
+                        decoration: InputDecoration(
+                          labelText: 'message',
+                          labelStyle: TextStyle(color: Colors.black54),
+
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                          filled: true,
+                          fillColor: Colors.grey[300],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          SnackBar(
+                            content: Text(
+                              'Contact Details has been sent to owner.',
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40.0),
+                          child: Text(
+                            'Send',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 80.0),
+          child: Text(
+            'Contact Owner',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
         child: Column(
@@ -98,7 +176,9 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
                   width: 400,
                   color: Colors.black,
                   child: Image.network(
-                    widget.property.images[index],
+                    widget.property.images[index].isNotEmpty
+                        ? widget.property.images[index]
+                        : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcCBHgbS23kyBw2r8Pquu19UtKZnrZmFUx1g&s',
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
@@ -106,7 +186,7 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Image.network(
-                        'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg',
+                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcCBHgbS23kyBw2r8Pquu19UtKZnrZmFUx1g&s',
                         fit: BoxFit.fill,
                       );
                     },
@@ -318,6 +398,31 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _custometextField(
+    TextEditingController controller,
+    String labelText,
+    bool isPhoneNo,
+  ) {
+    return TextField(
+      controller: controller,
+      keyboardType: isPhoneNo
+          ? TextInputType.numberWithOptions()
+          : TextInputType.name,
+      maxLength: isPhoneNo ? 10 : null,
+
+      cursorColor: Colors.grey[500],
+      style: TextStyle(color: Colors.black54),
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.black54),
+
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+        filled: true,
+        fillColor: Colors.grey[300],
       ),
     );
   }

@@ -7,6 +7,8 @@ import 'package:rental_application/screens/MainScreens/PremiunPage.dart';
 import 'package:rental_application/screens/Owner/OwnerProperties.dart';
 import 'package:rental_application/screens/Owner/PropertyForm.dart';
 import 'package:rental_application/theme/themeProvider.dart';
+import 'package:rental_application/widgets/CustomDrawer.dart';
+import 'package:rental_application/widgets/FullMap.dart';
 import 'package:rental_application/widgets/MapWidget.dart';
 
 class OwnerNavbarScreen extends ConsumerStatefulWidget {
@@ -41,15 +43,11 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            MapboxWidget(latitude: 18.5204, longitute: 73.8567),
-                      ),
+                      MaterialPageRoute(builder: (context) => FullMap()),
                     );
                   },
                   icon: Icon(Icons.location_on),
                 ),
-                Text('Pune'),
               ],
             ),
           ),
@@ -62,6 +60,8 @@ class _OwnerNavbarScreenState extends ConsumerState<OwnerNavbarScreen> {
           ),
         ],
       ),
+      drawer: Customdrawer(),
+
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
