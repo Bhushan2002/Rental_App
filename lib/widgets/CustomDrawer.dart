@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rental_application/auth/auth_provider.dart';
-import 'package:rental_application/screens/Owner/Profile.dart';
+import 'package:rental_application/screens/CommanPage/Profile.dart';
 
 class Customdrawer extends ConsumerWidget {
   const Customdrawer({super.key});

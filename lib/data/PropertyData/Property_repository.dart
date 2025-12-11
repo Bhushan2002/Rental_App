@@ -171,7 +171,8 @@ class PropertyRepository {
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
       );
       if (res.statusCode == 200) {
-        final List<dynamic> responseData = jsonDecode(res.body)['data'];
+        final List<dynamic> responseData = jsonDecode(res.body)['data'] ?? [];
+
         return responseData
             .map<Property>((json) => Property.fromJson(json))
             .toList();

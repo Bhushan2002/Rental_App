@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/PropertyData/Property_repository.dart';
+import 'package:rental_application/data/PropertyData/Property_repository.dart';
 import 'package:rental_application/models/PropertyModel.dart';
 
 // The StateNotifierProvider for the controller

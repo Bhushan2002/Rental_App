@@ -9,7 +9,6 @@ import 'package:rental_application/screens/Owner/PropertyForm.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/CustomDrawer.dart';
 import 'package:rental_application/widgets/FullMap.dart';
-import 'package:rental_application/widgets/MapWidget.dart';
 
 class OwnerNavbarScreen extends ConsumerStatefulWidget {
   const OwnerNavbarScreen({super.key});

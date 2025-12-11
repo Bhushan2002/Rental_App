@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rental_application/auth/auth_provider.dart';
 import 'package:rental_application/cors/ApiConstants.dart';
+import 'package:rental_application/data/MessageData/message_controller.dart';
 import 'package:rental_application/models/PropertyModel.dart';
 import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/MainScreens/HomScreen.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyForm.dart';
 import 'package:rental_application/theme/themeProvider.dart';
 import 'package:rental_application/widgets/MapWidget.dart';
+import 'package:rental_application/widgets/themeButton.dart';
 
 class UpdatePropertyPage extends ConsumerStatefulWidget {
   final Property property;
@@ -25,13 +27,23 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     // final themeMode = ref.watch(themeControllerProvider);
     final textTheme = Theme.of(context).primaryTextTheme;
     final role = ref.watch(userDetailsProvider).value ?? UserRole.tenant;
     final user = ref.watch(userDetailsProvider);
+
+    ref.listen<AsyncValue<void>>(messageControllerProvider, (_, state) {
+      if (state is AsyncError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('faild to send message.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
 
     // print(widget.property.coordinates);
     return Scaffold(
@@ -88,9 +100,8 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.black45),
+          backgroundColor: WidgetStateProperty.all(Colors.black45),
         ),
-
         onPressed: () {
           showDialog(
             context: context,
@@ -111,42 +122,84 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
                         nameController,
                         "${user.value!.firstName} ${user.value!.lastName}",
                         false,
+                        false,
                       ),
                       _custometextField(
                         emailController,
-                        "${user.value!.email}",
+                        user.value!.email,
+                        false,
                         false,
                       ),
                       TextField(
                         controller: messageController,
                         maxLines: 5,
-
                         cursorColor: Colors.grey[500],
-                        style: TextStyle(color: Colors.black54),
+                        style: const TextStyle(color: Colors.black54),
                         decoration: InputDecoration(
-                          labelText: 'message',
-                          labelStyle: TextStyle(color: Colors.black54),
-
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                          labelText: 'Message',
+                          labelStyle: const TextStyle(color: Colors.black54),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                           filled: true,
                           fillColor: Colors.grey[300],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          SnackBar(
-                            content: Text(
-                              'Contact Details has been sent to owner.',
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final isLoading = ref
+                              .watch(messageControllerProvider)
+                              .isLoading;
+                          return ElevatedButton(
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    if (messageController.text.isEmpty) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Please enter a message.',
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    ref
+                                        .read(
+                                          messageControllerProvider.notifier,
+                                        )
+                                        .sendMessage(
+                                          ownerId: widget.property.ownerId,
+                                          tenantId: user.value!.uid,
+                                          tenantName:
+                                              '${user.value!.firstName} ${user.value!.lastName}',
+                                          tenantEmail: user.value!.email,
+                                          message: messageController.text,
+                                          propertyId: widget.property.id,
+                                          context: context,
+                                        );
+                                  },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 40.0,
+                              ),
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Send',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleSmall,
+                                    ),
                             ),
                           );
                         },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 40.0),
-                          child: Text(
-                            'Send',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -156,7 +209,7 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
           );
         },
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 80.0),
+          padding: const EdgeInsets.symmetric(horizontal: 80.0),
           child: Text(
             'Contact Owner',
             style: Theme.of(context).textTheme.titleMedium,
@@ -352,7 +405,7 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
 
             SizedBox(height: 10),
 
-            Container(
+            SizedBox(
               height: 300,
               child: MapboxWidget(
                 latitude: widget.property.coordinates!.lat,
@@ -406,9 +459,11 @@ class _UpdatePropertyPageState extends ConsumerState<UpdatePropertyPage> {
     TextEditingController controller,
     String labelText,
     bool isPhoneNo,
+    bool enabled,
   ) {
     return TextField(
       controller: controller,
+      enabled: enabled,
       keyboardType: isPhoneNo
           ? TextInputType.numberWithOptions()
           : TextInputType.name,

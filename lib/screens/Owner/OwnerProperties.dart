@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/PropertyData/property_controller.dart';
+import 'package:rental_application/data/PropertyData/property_controller.dart';
 
 import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/widgets/PropertyCard.dart';
@@ -15,11 +15,11 @@ class Ownerproperties extends ConsumerStatefulWidget {
 class _OwnerpropertiesState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
-    final ow_properties = ref.watch(myPropertiesProvider);
-    print(ow_properties);
+    final owProperties = ref.watch(myPropertiesProvider);
+    print(owProperties);
 
     return Scaffold(
-      body: ow_properties.when(
+      body: owProperties.when(
         data: (properties) {
           if (properties.isEmpty) {
             return const Center(

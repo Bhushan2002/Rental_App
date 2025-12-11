@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rental_application/PropertyData/property_controller.dart';
+import 'package:rental_application/data/PropertyData/property_controller.dart';
 
 import 'package:rental_application/models/PropertyModel.dart';
-import 'package:rental_application/screens/Owner/CreatedProperty.dart';
+import 'package:rental_application/screens/Owner/PropertyList.dart';
 import 'package:rental_application/widgets/InputFields.dart';
 
 class PostPropertyForm extends ConsumerStatefulWidget {
@@ -36,8 +36,8 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
   final _landAreaController = TextEditingController();
 
   PropertyType _selectedType = PropertyType.Apartment;
-  List<String> _selectedAmenities = [];
-  List<XFile> _selectedImages = [];
+  final List<String> _selectedAmenities = [];
+  final List<XFile> _selectedImages = [];
   final ImagePicker _imagePicker = ImagePicker();
 
   // Boolean toggles
@@ -80,12 +80,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
     'Nashik',
     'Chhatrapati Sambhaji Nagar (Aurangabad)',
   ];
-  final List<String> _countries = [
-    'India',
-    'United States',
-    'United Kingdom',
-
-  ];
+  final List<String> _countries = ['India', 'United States', 'United Kingdom'];
   final List<String> _states = [
     'Andhra Pradesh',
     'Arunachal Pradesh',
@@ -274,7 +269,7 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
               } else {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreatedProperty()),
+                  MaterialPageRoute(builder: (context) => PropertyList()),
                 );
               }
             }
@@ -362,9 +357,9 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                           Theme.of(context).primaryTextTheme.bodyMedium
                               as TextStyle,
                       label: 'Street*',
-                      validator: (value) =>
-                          _validateRequired(value, 'street'),
-                    ), const SizedBox(height: 12),
+                      validator: (value) => _validateRequired(value, 'street'),
+                    ),
+                    const SizedBox(height: 12),
                     buildTextFormField(
                       controller: _postalCodeController,
                       tstyle:
@@ -375,20 +370,45 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
                           _validateRequired(value, 'Postal Code'),
                     ),
                     const SizedBox(height: 12),
-                    buildDropDowns("Please select a metro city", "Select a City", _metroCities, 'City', Icons.location_city, _selectedCity, (value){
-                      setState(() {
-                        _selectedCity = value;
-                      });
-                    }),
+                    buildDropDowns(
+                      "Please select a metro city",
+                      "Select a City",
+                      _metroCities,
+                      'City',
+                      Icons.location_city,
+                      _selectedCity,
+                      (value) {
+                        setState(() {
+                          _selectedCity = value;
+                        });
+                      },
+                    ),
                     const SizedBox(height: 12),
-                    buildDropDowns("please select a state", "select a State", _states, 'State', Icons.location_city, _selectedState, (value){
-                      setState(() {
-                        _selectedState = value;
-                      });
-                    }), const SizedBox(height: 12),
-                    buildDropDowns("please select a country", "select a Country", _countries, 'Country', Icons.location_city, _selectedCountry, (value){
-                      _selectedCountry = value;
-                    }),
+                    buildDropDowns(
+                      "please select a state",
+                      "select a State",
+                      _states,
+                      'State',
+                      Icons.location_city,
+                      _selectedState,
+                      (value) {
+                        setState(() {
+                          _selectedState = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    buildDropDowns(
+                      "please select a country",
+                      "select a Country",
+                      _countries,
+                      'Country',
+                      Icons.location_city,
+                      _selectedCountry,
+                      (value) {
+                        _selectedCountry = value;
+                      },
+                    ),
 
                     const SizedBox(height: 24),
 
@@ -675,8 +695,16 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
     );
   }
 
-  Widget buildDropDowns(String title,String hintText,List<String> list,String label, IconData icon, String? selected , onChange){
-    return  Column(
+  Widget buildDropDowns(
+    String title,
+    String hintText,
+    List<String> list,
+    String label,
+    IconData icon,
+    String? selected,
+    onChange,
+  ) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -687,23 +715,23 @@ class _PostPropertyFormState extends ConsumerState<PostPropertyForm> {
         // This is the core dropdown widget.
         DropdownButtonFormField<String>(
           // The text that appears before a selection is made.
-          hint:  Text(hintText, style: Theme.of(context).textTheme.bodyMedium,),
+          hint: Text(hintText, style: Theme.of(context).textTheme.bodyMedium),
           // The current value of the dropdown.
           value: selected,
           // The list of items the user can select from.
           items: list.map((String i) {
             return DropdownMenuItem<String>(
-
               value: i,
-              child: Text(i, style: Theme.of(context).textTheme.bodySmall,overflow: TextOverflow.fade,),
+              child: Text(
+                i,
+                style: Theme.of(context).textTheme.bodySmall,
+                overflow: TextOverflow.fade,
+              ),
             );
           }).toList(),
           // This function is called when the user selects an item.
           onChanged: onChange,
-          decoration: InputDecoration(
-            labelText: label,
-            prefixIcon: Icon(icon),
-          ),
+          decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon)),
         ),
       ],
     );

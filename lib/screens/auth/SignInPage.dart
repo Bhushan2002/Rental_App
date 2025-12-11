@@ -1,12 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/auth/auth_function.dart';
 import 'package:rental_application/auth/auth_provider.dart';
-import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/auth/signupPage.dart';
-import 'package:http/http.dart' as http;
 import 'package:rental_application/widgets/InputFields.dart';
 
 // The main sign-in page widget
@@ -23,31 +18,31 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   bool _isPasswordVisible = false;
 
-  Future<void> loginUser() async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUri/login'),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-        },
-        body: jsonEncode(<String, String>{
-          'email': _emailController.text,
-          'password': _passwordController.text,
-        }),
-      );
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        print('Sign-In successful');
-        print('Token ${responseBody['token']}');
-      } else {
-        final errorBody = jsonDecode((response.body));
-        print('Failed to sign in: ${errorBody['message']}');
-      }
-    } catch (e) {
-      print('An error occurred: $e');
-      // Handle network errors, etc.
-    }
-  }
+  // Future<void> loginUser() async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('$baseUri/login'),
+  //       headers: <String, String>{
+  //         "Content-Type": "application/json; charset=UTF-8",
+  //       },
+  //       body: jsonEncode(<String, String>{
+  //         'email': _emailController.text,
+  //         'password': _passwordController.text,
+  //       }),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final responseBody = jsonDecode(response.body);
+  //       print('Sign-In successful');
+  //       print('Token ${responseBody['token']}');
+  //     } else {
+  //       final errorBody = jsonDecode((response.body));
+  //       print('Failed to sign in: ${errorBody['message']}');
+  //     }
+  //   } catch (e) {
+  //     print('An error occurred: $e');
+  //     // Handle network errors, etc.
+  //   }
+  // }
 
   void _signIn() {
     ref
@@ -55,7 +50,6 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         .signInWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
-          role: UserRole.tenant,
           onError: (error) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error), backgroundColor: Colors.redAccent),
           ),

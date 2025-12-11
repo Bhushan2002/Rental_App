@@ -1,6 +1,6 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/auth/auth_provider.dart';
@@ -14,11 +14,16 @@ import 'package:rental_application/theme/themeProvider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Gemini.init(apiKey: "AIzaSyD-YL-yAlKNZS-ys-eD3bfUkywv6QlnYpE");
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+
+  );
   await setup();
 
   runApp(const ProviderScope(child: MyApp()));
 }
+
+
 
 Future<void> setup() async {
   MapboxOptions.setAccessToken(ApiConstants.MAPBOXKEY);

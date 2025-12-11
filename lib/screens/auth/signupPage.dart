@@ -23,6 +23,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _confirmPasswordController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _nameController = TextEditingController();
+
   bool _isLoading = false;
   // UserRole _selectedRole = UserRole.tenant;
   String _selectedRole = 'tenant';
@@ -49,6 +52,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
           role: _selectedRole,
+          phone: _phoneNumberController.text.trim(),
+
           onError: (error) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error), backgroundColor: Colors.redAccent),
           ),
@@ -99,11 +104,21 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               ),
               const SizedBox(height: 16.0),
 
+
+              const SizedBox(height: 16.0),
               // Email Input Field
               inputField(
                 'Email',
                 const Icon(Icons.email_outlined),
                 _emailController,
+              ),
+              const SizedBox(height: 16.0),
+
+              // Phone number
+              inputField(
+                'phone number ',
+                const Icon(Icons.phone),
+                _phoneNumberController,
               ),
               const SizedBox(height: 16.0),
 

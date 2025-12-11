@@ -5,7 +5,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:rental_application/models/PropertyModel.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/theme/themeProvider.dart';
-import 'package:rental_application/PropertyData/property_controller.dart';
+import 'package:rental_application/data/PropertyData/property_controller.dart';
 
 // Helper class to implement the click listener
 class _MyPointAnnotationClickListener

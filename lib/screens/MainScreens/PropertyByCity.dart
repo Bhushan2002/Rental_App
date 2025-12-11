@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_application/PropertyData/property_controller.dart';
+import 'package:rental_application/data/PropertyData/property_controller.dart';
+import 'package:rental_application/models/PropFilterModel.dart';
 import 'package:rental_application/screens/Owner/UpdatePropertyPage.dart';
 import 'package:rental_application/widgets/PropertyCard.dart';
+import 'package:rental_application/widgets/propertyFilter.dart';
 
 class PropertyByCity extends ConsumerStatefulWidget {
   final String city;
@@ -15,14 +17,44 @@ class PropertyByCity extends ConsumerStatefulWidget {
 class _PropertyByCityState extends ConsumerState<PropertyByCity> {
   @override
   Widget build(BuildContext context) {
+    final List<String> filterList = ['BHK', 'Furnished', 'Parking', 'Parking'];
+    final List<String> selectedFilter = [];
+
     final properties = ref.watch(propertiesByCityProvider(widget.city));
+    PropertyFilter? activeFilter;
+    void applyFilter() {
+
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Properties in ${widget.city}')),
+      appBar: AppBar(
+        title: Text('Properties in ${widget.city}'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: PropertyFilterWidget(
+                      onApply: (filter) {
+                        setState(() {
+                          activeFilter = filter;
+                        });
+                        applyFilter();
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.sort, size: 28),
+          ),
+        ],
+      ),
       body: properties.when(
         data: (property) {
-          if (property.isEmpty) {
-            return Center(child: Text('No properties found in ${widget.city}'));
-          } else {
+          if (property.isNotEmpty) {
             return ListView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(parent: ScrollPhysics()),
@@ -54,6 +86,8 @@ class _PropertyByCityState extends ConsumerState<PropertyByCity> {
                 );
               },
             );
+          } else {
+            return Center(child: Text('No properties found in ${widget.city}'));
           }
         },
         error: (err, stk) => Text("$err"),

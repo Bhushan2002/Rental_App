@@ -5,6 +5,9 @@ import 'package:rental_application/screens/MainScreens/HomScreen.dart';
 import 'package:rental_application/screens/MainScreens/MyBooking.dart';
 import 'package:rental_application/screens/MainScreens/P&mPage.dart';
 import 'package:rental_application/screens/MainScreens/PremiunPage.dart';
+import 'package:rental_application/widgets/CustomDrawer.dart';
+import 'package:rental_application/widgets/FullMap.dart';
+import 'package:rental_application/widgets/themeButton.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -26,6 +29,32 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Rental Houses"),
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FullMap()),
+                    );
+                  },
+                  icon: Icon(Icons.map_outlined),
+                  tooltip: 'View Map',
+                ),
+              ],
+            ),
+          ),
+
+          themeButton(ref),
+        ],
+      ),
+
+      drawer: Customdrawer(),
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

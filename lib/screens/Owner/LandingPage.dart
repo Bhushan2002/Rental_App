@@ -5,81 +5,62 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_application/models/UserModel.dart';
 import 'package:rental_application/screens/MainScreens/MainNavBarScreen.dart';
 import 'package:rental_application/screens/Owner/OwnerNavbarScreen.dart';
+import 'package:rental_application/screens/auth/SignInPage.dart';
 
-class LandingPage extends ConsumerStatefulWidget {
+final authStateProvider = StreamProvider<User?>(
+      (ref) => FirebaseAuth.instance.authStateChanges(),
+);
+
+class LandingPage extends ConsumerWidget {
   const LandingPage({super.key});
 
-  @override
-  ConsumerState<LandingPage> createState() => _LandingPageState();
-}
-
-class _LandingPageState extends ConsumerState<LandingPage> {
-  @override
-  void initState() {
-    super.initState();
-    _checkUserRole();
+  Future<String?> _getUserRole(String uid) async {
+    final snapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (snapshot.exists) {
+      return snapshot['role'] as String?;
+    }
+    return null;
   }
 
-  Future<void> _checkUserRole() async {
-    await Future.delayed(const Duration(seconds: 1)); // splash delay
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // if not logged in, send back to sign-in
-      Navigator.pushReplacementNamed(context, '/signin');
-      return;
-    }
-
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (!mounted) return;
-
-      if (snapshot.exists) {
-        final data = snapshot.data()!;
-        final role = data['role'];
-
-        if (role == UserRole.owner.name) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const OwnerNavbarScreen()),
-          );
-        } else if (role == UserRole.tenant.name) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-          );
+    return authState.when(
+      data: (user) {
+        if (user == null) {
+          // not signed in
+          return SignInPage(); // or Navigator.pushReplacementNamed
         } else {
-          // unknown role
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Unknown role, contact admin')),
+          // signed in → check role
+          return FutureBuilder<String?>(
+            future: _getUserRole(user.uid),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              final role = snapshot.data;
+              if (role == UserRole.owner.name) {
+                return const OwnerNavbarScreen();
+              } else if (role == UserRole.tenant.name) {
+                return const MainNavigationScreen();
+              } else {
+                return Scaffold(
+                  body: Center(child: Text('Unknown role, contact admin')),
+                );
+              }
+            },
           );
         }
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('User data not found')));
-      }
-    } catch (e) {
-      print("Error fetching user role: $e");
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          "Welcome!",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, stack) => Scaffold(
+        body: Center(child: Text('Error: $err')),
       ),
     );
   }

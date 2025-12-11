@@ -24,7 +24,7 @@ class _PropertySearchCardState extends State<PropertySearchCard> {
       'Delhi',
     ];
 
-    String _selectedCity = '';
+    String selectedCity;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
       child: Card(
@@ -67,7 +67,7 @@ class _PropertySearchCardState extends State<PropertySearchCard> {
                     focusNode: focusNode,
                     // obscureText: true,
                     decoration: InputDecoration(
-                      hintText: _selectedCity,
+                      hintText: '',
                       labelText: 'Search by city',
                       hintStyle: Theme.of(
                         context,
@@ -98,12 +98,12 @@ class _PropertySearchCardState extends State<PropertySearchCard> {
                           icon: const Icon(Icons.search, color: Colors.white),
                           onPressed: () {
                             setState(() {
-                              _selectedCity = 'Mumbai';
+                              selectedCity = 'Mumbai';
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      PropertyByCity(city: _selectedCity),
+                                      PropertyByCity(city: 'Pune'),
                                 ),
                               );
                             });
@@ -118,12 +118,12 @@ class _PropertySearchCardState extends State<PropertySearchCard> {
                 },
                 onSelected: (value) {
                   setState(() {
-                    _selectedCity = value.toString();
+                    selectedCity = value.toString();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            PropertyByCity(city: _selectedCity),
+                            PropertyByCity(city: selectedCity),
                       ),
                     );
                   });
